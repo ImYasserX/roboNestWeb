@@ -1,0 +1,113 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-mono: 'Geist Mono', 'Geist Mono Fallback';
+  
+  /* RoboNest Purple Theme */
+  --color-primary: #6C5CE7;
+  --color-primary-light: #8E7CFF;
+  --color-primary-accent: #A29BFE;
+  --color-primary-pale: #F0EFFE;
+  --color-surface: #F8F9FF;
+  --color-card-bg: #FFFFFF;
+  --color-text-primary: #1E1E2F;
+  --color-text-secondary: #6B6B8A;
+  --color-border-subtle: #E4E6F1;
+  
+  /* Keep existing tokens */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: #F8F9FF;
+  --foreground: #1E1E2F;
+  --card: #FFFFFF;
+  --card-foreground: #1E1E2F;
+  --popover: #FFFFFF;
+  --popover-foreground: #1E1E2F;
+  --primary: #6C5CE7;
+  --primary-foreground: #FFFFFF;
+  --secondary: #F0EFFE;
+  --secondary-foreground: #6C5CE7;
+  --muted: #F0EFFE;
+  --muted-foreground: #6B6B8A;
+  --accent: #F0EFFE;
+  --accent-foreground: #6C5CE7;
+  --destructive: #EF4444;
+  --destructive-foreground: #FFFFFF;
+  --border: #E4E6F1;
+  --input: #E4E6F1;
+  --ring: #6C5CE7;
+  --radius: 0.625rem;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
+  background: #F8F9FF;
+  color: #1E1E2F;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { 
+  width: 5px; 
+  height: 5px; 
+}
+
+::-webkit-scrollbar-track { 
+  background: #F0EFFE; 
+}
+
+::-webkit-scrollbar-thumb { 
+  background: #8E7CFF; 
+  border-radius: 99px; 
+}
+
+.no-scrollbar { 
+  scrollbar-width: none; 
+}
+
+.no-scrollbar::-webkit-scrollbar { 
+  display: none; 
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

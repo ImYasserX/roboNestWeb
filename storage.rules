@@ -1,0 +1,88 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ============================================
+    // HELPER FUNCTIONS
+    // ============================================
+    
+    // Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Check if user has admin role via custom claims
+    function isAdmin() {
+      return isAuthenticated() && request.auth.token.role == "admin";
+    }
+    
+    // Validate image file type
+    function isValidImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // Validate file size (max 5MB)
+    function isValidSize() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+    
+    // Combined image validation
+    function isValidImageUpload() {
+      return isValidImage() && isValidSize();
+    }
+    
+    // ============================================
+    // PRODUCT IMAGES
+    // ============================================
+    // Public read access for all product images
+    // Only admins can upload, update, or delete
+    // Path: products/{productId}/{fileName}
+    
+    match /products/{productId}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImageUpload();
+      allow delete: if isAdmin();
+    }
+    
+    // ============================================
+    // USER AVATARS
+    // ============================================
+    // Public read access (profile pictures are public)
+    // Users can only upload their own avatar
+    // Path: avatars/{userId}/{fileName}
+    
+    match /avatars/{userId}/{fileName} {
+      allow read: if true;
+      allow write: if isAuthenticated() && 
+                   request.auth.uid == userId && 
+                   isValidImageUpload();
+      allow delete: if isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // ============================================
+    // BANNER IMAGES
+    // ============================================
+    // Public read access
+    // Only admins can upload/modify
+    // Path: banners/{fileName}
+    
+    match /banners/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImageUpload();
+      allow delete: if isAdmin();
+    }
+    
+    // ============================================
+    // CATEGORY IMAGES
+    // ============================================
+    // Public read access
+    // Only admins can upload/modify
+    // Path: categories/{fileName}
+    
+    match /categories/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() && isValidImageUpload();
+      allow delete: if isAdmin();
+    }
+  }
+}
