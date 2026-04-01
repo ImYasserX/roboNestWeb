@@ -12,10 +12,13 @@ interface PageContainerProps {
 
 const DEFAULT_STYLE: CSSProperties = {
   width: "100%",
-  maxWidth: 1440,
-  margin: "0 auto",
+  maxWidth: "1440px",
+  marginInline: "auto",
+  marginBlock: 0,
   paddingBlock: 0,
   paddingInline: 24,
+  boxSizing: "border-box",
+  alignSelf: "center",
 };
 
 export default function PageContainer({

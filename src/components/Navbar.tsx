@@ -75,31 +75,8 @@ export default function Navbar() {
 
   return (
     <>
-      <nav
-        style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
-          right: 0,
-          height: 66,
-          zIndex: 50,
-          background: "rgba(255,255,255,0.98)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid #E4E6F1",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: 1440,
-            margin: "0 auto",
-            height: "100%",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            padding: "0 16px",
-            gap: 16,
-          }}
-        >
+      <nav className="fixed inset-x-0 top-0 z-50 h-16 bg-white/95 backdrop-blur-sm border-b border-[#E4E6F1]">
+        <div className="mx-auto h-full max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
           {/* === LEFT: Logo === */}
           <Link
             href="/"
@@ -138,10 +115,8 @@ export default function Navbar() {
           <form
             onSubmit={handleSearch}
             className="hidden md:flex flex-1 justify-center"
-            style={{
-              maxWidth: 400,
-            }}
           >
+            <div className="w-full max-w-md" >
             <div
               style={{
                 display: "flex",
@@ -170,26 +145,13 @@ export default function Navbar() {
                 }}
               />
             </div>
+          </div>
           </form>
 
           {/* === RIGHT: Nav Links + Icons === */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              flexShrink: 0,
-            }}
-          >
+          <div className="flex items-center gap-2 md:gap-3 flex-shrink-0">
             {/* Desktop Nav Links */}
-            <div
-              className="hidden lg:flex"
-              style={{
-                alignItems: "center",
-                gap: 16,
-                marginRight: 8,
-              }}
-            >
+            <div className="hidden lg:flex items-center gap-4 mr-2">
               {navLinks.map((link) => (
                 <Link
                   key={link.href}
@@ -210,15 +172,7 @@ export default function Navbar() {
             {/* Mobile Search Icon */}
             <button
               {...tap(() => setSearchOpen(true))}
-              className="flex md:hidden items-center justify-center"
-              style={{
-                width: 40,
-                height: 40,
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                borderRadius: 999,
-              }}
+              className="flex md:hidden items-center justify-center w-10 h-10 rounded-full hover:bg-[#E4E6F1] transition"
             >
               <Search size={22} style={{ color: "#1E1E2F" }} />
             </button>
@@ -226,12 +180,7 @@ export default function Navbar() {
             {/* Wishlist (desktop only) */}
             <Link
               href="/wishlist"
-              className="hidden md:flex items-center justify-center"
-              style={{
-                width: 40,
-                height: 40,
-                position: "relative",
-              }}
+              className="hidden md:flex items-center justify-center w-10 h-10 relative rounded-full hover:bg-[#E4E6F1] transition"
             >
               <Heart size={22} style={{ color: "#1E1E2F" }} />
               {wishlistCount > 0 && (
@@ -260,14 +209,7 @@ export default function Navbar() {
             {/* Cart */}
             <Link
               href="/cart"
-              style={{
-                width: 40,
-                height: 40,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                position: "relative",
-              }}
+              className="flex items-center justify-center w-10 h-10 relative rounded-full hover:bg-[#E4E6F1] transition"
             >
               <ShoppingCart size={22} style={{ color: "#1E1E2F" }} />
               {totalItems > 0 && (
@@ -296,13 +238,7 @@ export default function Navbar() {
             {/* Profile */}
             <Link
               href={user ? "/profile" : "/login"}
-              style={{
-                width: 40,
-                height: 40,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
+              className="flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#E4E6F1] transition"
             >
               <User size={22} style={{ color: "#1E1E2F" }} />
             </Link>
@@ -310,14 +246,7 @@ export default function Navbar() {
             {/* Mobile Menu Toggle */}
             <button
               {...tap(() => setMobileMenuOpen(!mobileMenuOpen))}
-              className="flex lg:hidden items-center justify-center"
-              style={{
-                width: 40,
-                height: 40,
-                border: "none",
-                background: "transparent",
-                cursor: "pointer",
-              }}
+              className="lg:hidden flex items-center justify-center w-10 h-10 rounded-full hover:bg-[#E4E6F1] transition"
             >
               {mobileMenuOpen ? (
                 <X size={24} style={{ color: "#1E1E2F" }} />

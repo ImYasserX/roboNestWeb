@@ -50,12 +50,7 @@ export default function Hero() {
 
   return (
     <section
-      style={{
-        position: "relative",
-        width: "100%",
-        minHeight: 400,
-        overflow: "hidden",
-      }}
+      className="relative w-full min-h-[400px] overflow-hidden"
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
@@ -99,18 +94,14 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <PageContainer style={{ paddingBlock: "48px", minHeight: 400 }}>
-        <div
-          style={{
-            position: "relative",
-            zIndex: 2,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            width: "100%",
-            gap: 32,
-          }}
-        >
+      <div className="mx-auto w-full max-w-7xl rounded-2xl overflow-hidden">
+        <PageContainer style={{ paddingBlock: "48px", minHeight: 400 }}>
+          <div
+            className="relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 w-full"
+            style={{
+              minHeight: 400,
+            }}
+          >
           {/* Left Content */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -239,6 +230,7 @@ export default function Hero() {
           </AnimatePresence>
         </div>
       </PageContainer>
+      </div>
 
       {/* Navigation Arrows - Hidden on mobile */}
       <button

@@ -13,9 +13,9 @@ const stats = [
 
 export default function StatsBar() {
   return (
-    <PageContainer as="section" style={{ paddingBlock: "32px" }}>
+    <PageContainer as="section" className="mt-8" style={{ paddingBlock: "32px" }}>
       <div
-        className="grid grid-cols-2 md:grid-cols-4"
+        className="grid grid-cols-2 md:grid-cols-4 gap-4"
         style={{
           background: "#fff",
           borderRadius: 20,

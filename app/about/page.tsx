@@ -1,404 +1,510 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Bot, Cpu, Zap, Users, Wrench, MapPin, Code2, ArrowRight } from "lucide-react"
-import Link from "next/link"
-import Navbar from "@/src/components/Navbar"
-import Footer from "@/src/components/Footer"
-import PageContainer from "@/src/components/PageContainer"
-import { Button } from "@/components/ui/button"
+import { motion } from "framer-motion";
 
-const coreServices = [
+const brandColors = {
+  bgLight: "#F8F9FF",
+  primary: "#2563eb",
+  primaryHover: "#1d4ed8",
+  primaryLight: "#dbeafe",
+  textDark: "#111827",
+  textMuted: "#4b5563",
+};
+
+const intro = [
+  "Electronics store",
+  "Robotics lab",
+  "Engineering service provider",
+];
+
+const whatWeDo = [
   {
-    icon: Bot,
-    title: "Electronics Components",
-    description: "Arduino, ESP boards, sensors, IoT modules, and robotics kits curated for performance.",
+    title: "Component Store",
+    description: "Arduino, ESP boards, sensors, IoT modules, robotics kits",
   },
   {
-    icon: Wrench,
-    title: "Custom Robotics Builds",
-    description: "Hands-on assembly and customization for your specific project requirements.",
+    title: "Custom Robotics",
+    description: "Custom robotics builds tailored to your project needs",
   },
   {
-    icon: Code2,
     title: "Engineering Services",
-    description: "3D printing, CAD design, electronics prototyping, and product assembly.",
+    description: "3D printing, CAD design, prototyping, product assembly",
   },
-  {
-    icon: Zap,
-    title: "Technical Support",
-    description: "Direct support from engineers who understand your hardware challenges.",
-  },
-]
+];
 
-const differentiation = [
-  "Highly competitive pricing on all components",
-  "Engineering services bundled with products—not just reselling",
-  "Support for both learning and advanced project development",
-  "Quality-controlled, tested components",
-  "Fast and reliable delivery within Iraq",
-]
+const whyRoboNest = [
+  { title: "Cheapest items in the market", icon: "💰" },
+  { title: "Wide range of services", icon: "🔧" },
+  { title: "Not just reselling — real engineering", icon: "⚙️" },
+  { title: "Supports beginners and advanced users", icon: "🎓" },
+];
 
-const founders = [
-  {
-    name: "Yasser Elyas",
-    role: "Founder",
-  },
-  {
-    name: "Anas Hussien",
-    role: "Founder",
-  },
-  {
-    name: "Ayman Ramadhan",
-    role: "Co-Founder",
-  },
-]
+const targetUsers = ["Students", "Engineers", "Robotics builders"];
 
-export default function AboutPage() {
+const mission =
+  "Make robotics and electronics accessible and affordable while delivering professional engineering capability for every project.";
+
+const vision =
+  "Become a leading robotics brand and evolve into a future PCB manufacturing lab serving Iraq and the wider region.";
+
+const team = [
+  { name: "Yasser Elyas", role: "Founder" },
+  { name: "Anas Hussien", role: "Founder" },
+  { name: "Ayman Ramadhan", role: "Co-Founder" },
+];
+
+export default function App() {
   return (
-    <>
-      <Navbar />
-
-      <main
-        style={{
-          paddingTop: 66,
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "100vh",
-          background: "#F8F9FF",
-        }}
-      >
-        {/* Hero Section */}
-        <PageContainer as="section" className="py-16 bg-gradient-to-br from-[#F5F3FF] to-[#F0F0FF]">
+    <div
+      className="min-h-screen w-full font-sans"
+      style={{ backgroundColor: brandColors.bgLight }}
+    >
+      {/* Hero Section */}
+      <section className="relative overflow-hidden bg-gradient-to-br from-white to-[#f0f2ff] px-6 py-20 lg:py-24">
+        <div className="mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <Bot className="w-4 h-4" />
-              About RoboNest
-            </div>
-            <h1 className="text-4xl lg:text-6xl font-bold text-foreground mb-6">
-              Robotics and Electronics for{" "}
-              <span className="text-primary">Builders</span>
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="mb-4 inline-block rounded-full px-4 py-2 text-sm font-medium"
+              style={{
+                backgroundColor: brandColors.primaryLight,
+                color: brandColors.primary,
+              }}
+            >
+              🤖 About RoboNest
+            </motion.div>
+
+            <h1
+              className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
+              style={{ color: brandColors.textDark }}
+            >
+              Engineering Your{" "}
+              <span style={{ color: brandColors.primary }}>
+                Robotics Future
+              </span>
             </h1>
-            <p className="text-lg text-muted-foreground leading-tight max-w-2xl mx-auto">
-              We combine affordable components with real engineering capabilities. RoboNest is not a parts store—it's a platform built for students, engineers, and developers who need to design, prototype, and build.
+
+            <p
+              className="mx-auto max-w-3xl text-lg leading-relaxed md:text-xl"
+              style={{ color: brandColors.textMuted }}
+            >
+              RoboNest combines an electronics component store, engineering lab,
+              and full-service robotics builder for the Iraq market.
             </p>
           </motion.div>
-        </PageContainer>
+        </div>
+      </section>
 
-        {/* What We Do Section */}
-        <PageContainer as="section" className="py-16">
+      {/* What We Are */}
+      <section className="bg-white px-6 py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            <h2
+              className="mb-8 text-center text-3xl font-bold md:text-4xl"
+              style={{ color: brandColors.textDark }}
+            >
+              RoboNest is
+            </h2>
+
+Saaud, [01.04.2026 16:38]
+<div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-6">
+              {intro.map((item, index) => (
+                <motion.div
+                  key={item}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
+                  className="flex items-center gap-3 rounded-xl border px-6 py-4 shadow-sm transition-shadow hover:shadow-md"
+                  style={{
+                    backgroundColor: brandColors.bgLight,
+                    borderColor: brandColors.primaryLight,
+                  }}
+                >
+                  <div
+                    className="h-3 w-3 rounded-full"
+                    style={{ backgroundColor: brandColors.primary }}
+                  />
+                  <span
+                    className="text-lg font-medium"
+                    style={{ color: brandColors.textDark }}
+                  >
+                    {item}
+                  </span>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* What We Do */}
+      <section
+        className="px-6 py-16 lg:py-20"
+        style={{ backgroundColor: brandColors.bgLight }}
+      >
+        <div className="mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2
+              className="mb-4 text-center text-3xl font-bold md:text-4xl"
+              style={{ color: brandColors.textDark }}
+            >
               What We Do
             </h2>
-            <p className="text-muted-foreground leading-tight mb-6">
-              RoboNest operates as a unified platform combining three core competencies:
+
+            <p
+              className="mb-12 text-center text-lg"
+              style={{ color: brandColors.textMuted }}
+            >
+              End-to-end solutions for your robotics and electronics projects
             </p>
+
+            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              {whatWeDo.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.15, duration: 0.5 }}
+                  className="rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+                >
+                  <div
+                    className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
+                    style={{ backgroundColor: brandColors.primaryLight }}
+                  >
+                    <div
+                      className="h-6 w-6 rounded-lg"
+                      style={{ backgroundColor: brandColors.primary }}
+                    />
+                  </div>
+
+                  <h3
+                    className="mb-3 text-xl font-bold"
+                    style={{ color: brandColors.textDark }}
+                  >
+                    {item.title}
+                  </h3>
+
+                  <p
+                    className="leading-relaxed"
+                    style={{ color: brandColors.textMuted }}
+                  >
+                    {item.description}
+                  </p>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            {coreServices.map((service, index) => (
-              <motion.div
-                key={service.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
-                  <service.icon className="w-6 h-6 text-primary" />
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-2">
-                  {service.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-tight">
-                  {service.description}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </PageContainer>
-
-        {/* Why RoboNest Section */}
-        <PageContainer as="section" className="py-16 bg-[#F5F3FF]">
+      {/* Why RoboNest */}
+      <section className="bg-white px-6 py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            <h2
+              className="mb-4 text-center text-3xl font-bold md:text-4xl"
+              style={{ color: brandColors.textDark }}
+            >
               Why RoboNest
             </h2>
-            <p className="text-muted-foreground leading-tight mb-6">
-              We differentiate ourselves through integrated services and a genuine focus on making advanced electronics and robotics accessible.
+
+Saaud, [01.04.2026 16:38]
+<p
+              className="mb-12 text-center text-lg"
+              style={{ color: brandColors.textMuted }}
+            >
+              What sets us apart from the competition
             </p>
+
+            <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
+              {whyRoboNest.map((item, index) => (
+                <motion.div
+                  key={item.title}
+                  initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
+                  whileInView={{ opacity: 1, x: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="flex items-start gap-4 rounded-xl border p-6"
+                  style={{
+                    backgroundColor: brandColors.bgLight,
+                    borderColor: brandColors.primaryLight,
+                  }}
+                >
+                  <div className="text-3xl">{item.icon}</div>
+                  <div>
+                    <p
+                      className="text-lg font-medium"
+                      style={{ color: brandColors.textDark }}
+                    >
+                      {item.title}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
+        </div>
+      </section>
 
-          <ul className="space-y-4">
-            {differentiation.map((item, index) => (
-              <motion.div
-                key={item}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.08 }}
-                className="flex gap-4 items-start"
+      {/* Mission & Vision */}
+      <section
+        className="px-6 py-16 text-white lg:py-20"
+        style={{ backgroundColor: brandColors.primary }}
+      >
+        <div className="mx-auto max-w-6xl">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div
+              className="rounded-2xl border p-8"
+              style={{
+                backgroundColor: "rgba(255,255,255,0.1)",
+                backdropFilter: "blur(4px)",
+                borderColor: "rgba(255,255,255,0.2)",
+              }}
+            >
+              <div
+                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl"
+                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
               >
-                <div className="w-6 h-6 rounded-full bg-primary/20 flex items-center justify-center mt-0.5 flex-shrink-0">
-                  <div className="w-2 h-2 rounded-full bg-primary" />
-                </div>
-                <p className="text-foreground leading-tight">{item}</p>
-              </motion.div>
-            ))}
-          </ul>
-        </PageContainer>
-
-        {/* Mission & Vision Section */}
-        <PageContainer as="section" className="py-16">
-          <div className="grid md:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-            >
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                Our Mission
-              </h2>
-              <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-foreground font-medium leading-tight">
-                  To make robotics and electronics accessible by combining affordable components with real engineering capabilities.
-                </p>
+                <span className="text-3xl">🎯</span>
               </div>
-            </motion.div>
+              <h3 className="mb-4 text-2xl font-bold">Our Mission</h3>
+              <p className="text-lg leading-relaxed text-white/90">{mission}</p>
+            </div>
 
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
+            <div
+              className="rounded-2xl border p-8"
+              style={{
+                backgroundColor: "rgba(255,255,255,0.1)",
+                backdropFilter: "blur(4px)",
+                borderColor: "rgba(255,255,255,0.2)",
+              }}
             >
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-                Our Vision
-              </h2>
-              <div className="bg-white rounded-lg p-5 shadow-sm">
-                <p className="text-foreground font-medium leading-tight">
-                  To evolve into a leading robotics brand and a regional manufacturing hub for electronics and PCB production.
-                </p>
+              <div
+                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl"
+                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+              >
+                <span className="text-3xl">🚀</span>
               </div>
-            </motion.div>
+              <h3 className="mb-4 text-2xl font-bold">Our Vision</h3>
+              <p className="text-lg leading-relaxed text-white/90">{vision}</p>
+            </div>
           </div>
-        </PageContainer>
+        </div>
+      </section>
 
-        {/* Target Users Section */}
-        <PageContainer as="section" className="py-16">
+      {/* Who We Serve */}
+      <section className="bg-white px-6 py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: 0.5 }}
           >
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
+            <h2
+              className="mb-4 text-3xl font-bold md:text-4xl"
+              style={{ color: brandColors.textDark }}
+            >
               Who We Serve
             </h2>
+
+            <p
+              className="mb-12 text-lg"
+              style={{ color: brandColors.textMuted }}
+            >
+              Supporting the robotics community at every level
+            </p>
+
+Saaud, [01.04.2026 16:38]
+<div className="flex flex-wrap justify-center gap-4">
+              {targetUsers.map((user, index) => (
+                <motion.div
+                  key={user}
+                  initial={{ opacity: 0, scale: 0.8 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.4 }}
+                  className="cursor-default rounded-full border-2 px-8 py-4 text-lg font-semibold transition-all"
+                  style={{
+                    backgroundColor: brandColors.bgLight,
+                    borderColor: brandColors.primaryLight,
+                    color: brandColors.textDark,
+                  }}
+                >
+                  {user}
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
+        </div>
+      </section>
 
-          <div className="grid md:grid-cols-2 gap-6">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0 }}
+      {/* Team Section */}
+      <section
+        className="px-6 py-16 lg:py-20"
+        style={{ backgroundColor: brandColors.bgLight }}
+      >
+        <div className="mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2
+              className="mb-4 text-center text-3xl font-bold md:text-4xl"
+              style={{ color: brandColors.textDark }}
             >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0 mt-1">
-                  <Users className="w-5 h-5 text-primary" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Primary Audience
-                  </h3>
-                  <ul className="space-y-2 text-muted-foreground text-sm">
-                    <li>• Engineering students</li>
-                    <li>• Robotics enthusiasts</li>
-                    <li>• Developers working on hardware projects</li>
-                  </ul>
-                </div>
-              </div>
-            </motion.div>
+              Meet Our Team
+            </h2>
 
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.1 }}
+            <p
+              className="mb-12 text-center text-lg"
+              style={{ color: brandColors.textMuted }}
             >
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-1">
-                  <Zap className="w-5 h-5 text-accent" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    Secondary Audience
+              The engineers and innovators behind RoboNest
+            </p>
+
+            <div className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
+              {team.map((member, index) => (
+                <motion.div
+                  key={member.name}
+                  initial={{ opacity: 0, y: 30 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-lg transition-all hover:shadow-xl"
+                >
+                  <div
+                    className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white"
+                    style={{
+                      background: `linear-gradient(135deg, ${brandColors.primary}, #60a5fa)`,
+                    }}
+                  >
+                    {member.name.charAt(0)}
+                  </div>
+
+                  <h3
+                    className="mb-1 text-xl font-bold"
+                    style={{ color: brandColors.textDark }}
+                  >
+                    {member.name}
                   </h3>
-                  <p className="text-muted-foreground text-sm leading-tight">
-                    Anyone building or experimenting with electronics, from hobbyists to small businesses.
+
+                  <p
+                    className="font-medium"
+                    style={{ color: brandColors.primary }}
+                  >
+                    {member.role}
                   </p>
-                </div>
-              </div>
-            </motion.div>
-          </div>
-        </PageContainer>
-
-        {/* Commitment Section */}
-        <PageContainer as="section" className="py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-          >
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4 text-center">
-              Our Commitment
-            </h2>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6">
-            {[
-              { title: "Quality Control", desc: "All components are tested and verified before shipping." },
-              { title: "Reliable Support", desc: "Direct access to engineers who understand your challenges." },
-              { title: "Fast Delivery", desc: "Efficient shipping within Iraq with reliable tracking." },
-            ].map((item, index) => (
-              <motion.div
-                key={item.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="text-center"
-              >
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-4 flex items-center justify-center">
-                  <Cpu className="w-6 h-6 text-white" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">
-                  {item.title}
-                </h3>
-                <p className="text-muted-foreground text-sm leading-tight">
-                  {item.desc}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </PageContainer>
-
-        {/* Founders Section */}
-        <PageContainer as="section" className="py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h2 className="text-3xl lg:text-4xl font-bold text-foreground mb-4">
-              Founding Team
-            </h2>
-            <p className="text-muted-foreground leading-tight">
-              RoboNest founded by professionals passionate about making engineering accessible.
-            </p>
-          </motion.div>
-
-          <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-6 mt-6">
-            {founders.map((founder, index) => (
-              <motion.div
-                key={founder.name}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                className="bg-white rounded-lg p-5 text-center shadow-md hover:shadow-lg transition-shadow"
-              >
-                <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-accent mx-auto mb-6 flex items-center justify-center">
-                  <span className="text-2xl font-bold text-white">
-                    {founder.name.split(" ").map(n => n[0]).join("")}
-                  </span>
-                </div>
-                <h3 className="text-lg font-semibold text-foreground mb-1">
-                  {founder.name}
-                </h3>
-                <p className="text-primary text-sm font-medium">
-                  {founder.role}
-                </p>
-              </motion.div>
-            ))}
-          </div>
-        </PageContainer>
-
-        {/* Location Section */}
-        <PageContainer as="section" className="py-16">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="bg-white rounded-lg p-6 shadow-sm text-center"
-          >
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <MapPin className="w-6 h-6 text-primary" />
-              <h2 className="text-3xl lg:text-4xl font-bold text-foreground">
-                Currently Operating in Iraq
-              </h2>
-            </div>
-            <p className="text-muted-foreground leading-tight max-w-2xl mx-auto">
-              We are actively serving the Iraqi market with plans to expand regionally and establish ourselves as a hub for robotics innovation and electronics manufacturing across the Middle East.
-            </p>
-          </motion.div>
-        </PageContainer>
-
-        {/* CTA Section */}
-        <PageContainer as="section" style={{ paddingBlock: "64px", background: "#F5F3FF" }}>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-r from-primary to-primary/80 rounded-lg p-6 lg:p-8 text-center"
-          >
-            <h2 className="text-3xl lg:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to Build Something?
-            </h2>
-            <p className="text-primary-foreground/90 mb-8 leading-tight max-w-2xl mx-auto">
-              Explore our components, services, and engineering capabilities. Let's turn your ideas into reality.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="gap-2 bg-white text-primary hover:bg-white/90">
-                <Link href="/products">
-                  Browse Components
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="bg-transparent border-primary-foreground/30 text-primary-foreground hover:bg-primary-foreground/10">
-                <Link href="/contact">
-                  Get in Touch
-                </Link>
-              </Button>
+                </motion.div>
+              ))}
             </div>
           </motion.div>
-        </PageContainer>
+        </div>
+      </section>
 
-        <Footer />
-      </main>
-    </>
-  )
+Saaud, [01.04.2026 16:38]
+{/* Location */}
+      <section className="bg-white px-6 py-16 lg:py-20">
+        <div className="mx-auto max-w-6xl">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="rounded-3xl border-2 p-10 text-center md:p-12"
+            style={{
+              backgroundColor: brandColors.bgLight,
+              borderColor: brandColors.primaryLight,
+            }}
+          >
+            <div className="mb-4 text-5xl">📍</div>
+            <h2
+              className="mb-3 text-3xl font-bold"
+              style={{ color: brandColors.textDark }}
+            >
+              Our Location
+            </h2>
+            <p
+              className="mb-2 text-lg font-medium"
+              style={{ color: brandColors.textDark }}
+            >
+              Currently serving Iraq
+            </p>
+            <p style={{ color: brandColors.textMuted }}>
+              Future regional expansion planned
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section
+        className="px-6 py-16 text-white lg:py-20"
+        style={{
+          background: `linear-gradient(135deg, ${brandColors.primary}, #60a5fa)`,
+        }}
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="mb-6 text-3xl font-bold md:text-4xl">
+              Ready to Build Your Next Project?
+            </h2>
+
+            <p className="mb-10 text-lg leading-relaxed text-white/90 md:text-xl">
+              Get in touch with our team for component sourcing, custom robotics
+              builds, or engineering services.
+            </p>
+
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="rounded-full bg-white px-10 py-4 text-lg font-bold shadow-lg transition-colors"
+              style={{ color: brandColors.primary }}
+            >
+              Contact Us
+            </motion.button>
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer
+        className="px-6 py-8 text-center"
+        style={{ backgroundColor: "#111827", color: "#9ca3af" }}
+      >
+        <p>© 2026 RoboNest. All rights reserved.</p>
+      </footer>
+    </div>
+  );
 }
