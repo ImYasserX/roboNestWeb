@@ -183,6 +183,7 @@ export default function RegisterPage() {
         {/* Full Name */}
         <div style={{ marginBottom: 16 }}>
           <label
+            htmlFor="register-full-name"
             style={{
               display: "block",
               fontSize: 14,
@@ -205,6 +206,7 @@ export default function RegisterPage() {
           >
             <User size={20} style={{ color: "#6B6B8A" }} />
             <input
+              id="register-full-name"
               type="text"
               placeholder="Enter your full name"
               value={formData.displayName}
@@ -228,6 +230,7 @@ export default function RegisterPage() {
         {/* Email */}
         <div style={{ marginBottom: 16 }}>
           <label
+            htmlFor="register-email"
             style={{
               display: "block",
               fontSize: 14,
@@ -250,6 +253,7 @@ export default function RegisterPage() {
           >
             <Mail size={20} style={{ color: "#6B6B8A" }} />
             <input
+              id="register-email"
               type="email"
               placeholder="you@example.com"
               value={formData.email}
@@ -273,6 +277,7 @@ export default function RegisterPage() {
         {/* Phone */}
         <div style={{ marginBottom: 16 }}>
           <label
+            htmlFor="register-phone"
             style={{
               display: "block",
               fontSize: 14,
@@ -306,6 +311,7 @@ export default function RegisterPage() {
               +964
             </span>
             <input
+              id="register-phone"
               type="tel"
               placeholder="07XX XXX XXXX"
               value={formData.phone}
@@ -336,6 +342,7 @@ export default function RegisterPage() {
         {/* Password */}
         <div style={{ marginBottom: 24 }}>
           <label
+            htmlFor="register-password"
             style={{
               display: "block",
               fontSize: 14,
@@ -358,6 +365,7 @@ export default function RegisterPage() {
           >
             <Lock size={20} style={{ color: "#6B6B8A" }} />
             <input
+              id="register-password"
               type={showPassword ? "text" : "password"}
               placeholder="Min. 6 characters"
               value={formData.password}

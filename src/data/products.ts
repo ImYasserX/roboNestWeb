@@ -8,11 +8,39 @@ export type Product = {
   discount?: number;
   emoji: string;
   imageUrl?: string;
+  images?: string[];
   isNew?: boolean;
   rating: number;
   reviewCount: number;
   stock: number;
   description?: string;
+};
+
+export type OrderStatus =
+  | "pending"
+  | "processing"
+  | "shipped"
+  | "delivered"
+  | "cancelled";
+
+export type TimestampLike =
+  | Date
+  | {
+      seconds: number;
+      nanoseconds?: number;
+      toDate?: () => Date;
+    }
+  | null
+  | undefined;
+
+export type DeliveryInfo = {
+  fullName: string;
+  phone: string;
+  city: string;
+  area?: string;
+  details?: string;
+  address?: string;
+  country?: string;
 };
 
 export type CartItem = {
@@ -31,17 +59,12 @@ export type Order = {
   subtotal: number;
   deliveryFee: number;
   total: number;
-  status: "pending" | "processing" | "shipped" | "delivered" | "cancelled";
+  status: OrderStatus;
   paymentMethod: "cod";
-  delivery: {
-    fullName: string;
-    phone: string;
-    city: string;
-    area: string;
-    details: string;
-  };
-  createdAt?: Date;
-  updatedAt?: Date;
+  delivery: DeliveryInfo;
+  shippingAddress?: DeliveryInfo;
+  createdAt?: TimestampLike;
+  updatedAt?: TimestampLike;
 };
 
 export type UserProfile = {

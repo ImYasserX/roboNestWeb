@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs, doc, updateDoc, query, orderBy } from "firebase/firestore";
 import { db } from "@/src/lib/firebase";
-import { Order } from "@/src/data/products";
+import { DeliveryInfo, Order, OrderStatus, TimestampLike } from "@/src/data/products";
 import { formatPrice } from "@/src/lib/currency";
 import {
   Clock,
@@ -24,6 +24,20 @@ const statusOptions = [
   { value: "cancelled", label: "Cancelled", color: "#EF4444", bg: "#FEE2E2" },
 ];
 
+function getOrderDelivery(order: Order): DeliveryInfo | null {
+  return order.delivery || order.shippingAddress || null;
+}
+
+function formatOrderDate(timestamp: TimestampLike): string {
+  if (!timestamp) return "N/A";
+  if (timestamp instanceof Date) return timestamp.toLocaleDateString();
+  if (typeof timestamp.toDate === "function") return timestamp.toDate().toLocaleDateString();
+  if (typeof timestamp.seconds === "number") {
+    return new Date(timestamp.seconds * 1000).toLocaleDateString();
+  }
+  return "N/A";
+}
+
 const statusIcons: Record<string, React.ElementType> = {
   pending: Clock,
   processing: Package,
@@ -39,6 +53,7 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [expandedOrder, setExpandedOrder] = useState<string | null>(null);
   const [updating, setUpdating] = useState<string | null>(null);
+  const [updateError, setUpdateError] = useState("");
 
   const loadOrders = async () => {
     try {
@@ -63,26 +78,27 @@ export default function AdminOrdersPage() {
     loadOrders();
   }, []);
 
-  const updateOrderStatus = async (orderId: string, newStatus: string) => {
+  const updateOrderStatus = async (orderId: string, newStatus: OrderStatus) => {
     setUpdating(orderId);
+    setUpdateError("");
     try {
       await updateDoc(doc(db, "orders", orderId), { status: newStatus });
       setOrders((prev) =>
         prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
       );
     } catch (error) {
-      console.error("Error updating order:", error);
-      alert("Failed to update order status");
+      setUpdateError("Failed to update order status. Please try again.");
     }
     setUpdating(null);
   };
 
   const filteredOrders = orders.filter((order) => {
+    const delivery = getOrderDelivery(order);
+    const orderId = order.id ?? "";
     const matchesSearch =
-      order.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (order as any).shippingAddress?.fullName
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase());
+      orderId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      delivery?.fullName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      false;
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
     return matchesSearch && matchesStatus;
@@ -208,6 +224,12 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders List */}
+      {updateError && (
+        <p style={{ marginBottom: 16, color: "#DC2626", fontSize: 14 }}>
+          {updateError}
+        </p>
+      )}
+
       {filteredOrders.length === 0 ? (
         <div
           style={{
@@ -245,11 +267,13 @@ export default function AdminOrdersPage() {
             const statusConfig = statusOptions.find(
               (s) => s.value === order.status
             ) || statusOptions[0];
-            const isExpanded = expandedOrder === order.id;
+            const orderId = order.id ?? "";
+            const delivery = getOrderDelivery(order);
+            const isExpanded = expandedOrder === orderId;
 
             return (
               <div
-                key={order.id}
+                key={orderId}
                 style={{
                   background: "#fff",
                   borderRadius: 16,
@@ -260,7 +284,7 @@ export default function AdminOrdersPage() {
                 {/* Order Header */}
                 <div
                   onClick={() =>
-                    setExpandedOrder(isExpanded ? null : order.id)
+                    setExpandedOrder(isExpanded ? null : orderId)
                   }
                   style={{
                     padding: 20,
@@ -281,10 +305,10 @@ export default function AdminOrdersPage() {
                         marginBottom: 4,
                       }}
                     >
-                      Order #{order.id.slice(-6).toUpperCase()}
+                      Order #{orderId.slice(-6).toUpperCase()}
                     </div>
                     <div style={{ fontSize: 13, color: "#6B7280" }}>
-                      {(order as any).shippingAddress?.fullName || "N/A"} -{" "}
+                      {delivery?.fullName || "N/A"} -{" "}
                       {order.items?.length || 0} items
                     </div>
                   </div>
@@ -301,11 +325,7 @@ export default function AdminOrdersPage() {
                       {formatPrice(order.total || 0)}
                     </div>
                     <div style={{ fontSize: 12, color: "#6B7280" }}>
-                      {order.createdAt
-                        ? new Date(
-                            (order.createdAt as any).seconds * 1000
-                          ).toLocaleDateString()
-                        : "N/A"}
+                      {formatOrderDate(order.createdAt)}
                     </div>
                   </div>
 
@@ -421,7 +441,7 @@ export default function AdminOrdersPage() {
                     </div>
 
                     {/* Shipping Address */}
-                    {(order as any).shippingAddress && (
+                    {delivery && (
                       <div style={{ marginTop: 20 }}>
                         <h4
                           style={{
@@ -445,14 +465,14 @@ export default function AdminOrdersPage() {
                           }}
                         >
                           <div style={{ fontWeight: 500 }}>
-                            {(order as any).shippingAddress.fullName}
+                            {delivery.fullName}
                           </div>
-                          <div>{(order as any).shippingAddress.address}</div>
+                          <div>{delivery.address || delivery.details || "N/A"}</div>
                           <div>
-                            {(order as any).shippingAddress.city},{" "}
-                            {(order as any).shippingAddress.country}
+                            {delivery.city}
+                            {delivery.country ? `, ${delivery.country}` : ""}
                           </div>
-                          <div>{(order as any).shippingAddress.phone}</div>
+                          <div>{delivery.phone}</div>
                         </div>
                       </div>
                     )}
@@ -481,10 +501,10 @@ export default function AdminOrdersPage() {
                           <button
                             key={opt.value}
                             onClick={() =>
-                              updateOrderStatus(order.id, opt.value)
+                              orderId && updateOrderStatus(orderId, opt.value as OrderStatus)
                             }
                             disabled={
-                              updating === order.id ||
+                              updating === orderId ||
                               order.status === opt.value
                             }
                             style={{
@@ -506,7 +526,7 @@ export default function AdminOrdersPage() {
                                 order.status === opt.value
                                   ? "default"
                                   : "pointer",
-                              opacity: updating === order.id ? 0.5 : 1,
+                              opacity: updating === orderId ? 0.5 : 1,
                             }}
                           >
                             {opt.label}

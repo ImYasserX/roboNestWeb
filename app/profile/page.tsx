@@ -34,6 +34,7 @@ export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [formData, setFormData] = useState({
     displayName: "",
     phone: "",
@@ -62,6 +63,7 @@ export default function ProfilePage() {
 
   const handleSave = async () => {
     setSaving(true);
+    setSaveError("");
     try {
       await updateProfile({
         displayName: formData.displayName,
@@ -74,8 +76,7 @@ export default function ProfilePage() {
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (error) {
-      console.error("Error updating profile:", error);
-      alert("Failed to update profile. Please try again.");
+      setSaveError("Failed to update profile. Please try again.");
     }
     setSaving(false);
   };
@@ -85,7 +86,7 @@ export default function ProfilePage() {
       await logOut();
       router.push("/");
     } catch (error) {
-      console.error("Error logging out:", error);
+      setSaveError("Failed to log out. Please try again.");
     }
   };
 
@@ -194,9 +195,24 @@ export default function ProfilePage() {
           {editing ? (
             /* Edit Form */
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {saveError && (
+                <div
+                  style={{
+                    padding: "12px 16px",
+                    background: "#FEF2F2",
+                    color: "#EF4444",
+                    borderRadius: 12,
+                    fontSize: 14,
+                  }}
+                >
+                  {saveError}
+                </div>
+              )}
+
               {/* Name */}
               <div>
                 <label
+                  htmlFor="profile-display-name"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -219,6 +235,7 @@ export default function ProfilePage() {
                 >
                   <User size={20} style={{ color: "#6B6B8A" }} />
                   <input
+                    id="profile-display-name"
                     type="text"
                     value={formData.displayName}
                     onChange={(e) =>
@@ -240,6 +257,7 @@ export default function ProfilePage() {
               {/* Phone */}
               <div>
                 <label
+                  htmlFor="profile-phone"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -273,6 +291,7 @@ export default function ProfilePage() {
                     +964
                   </span>
                   <input
+                    id="profile-phone"
                     type="tel"
                     placeholder="07XX XXX XXXX"
                     value={formData.phone}
@@ -298,6 +317,7 @@ export default function ProfilePage() {
               {/* City */}
               <div>
                 <label
+                  htmlFor="profile-city"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -310,6 +330,7 @@ export default function ProfilePage() {
                 </label>
                 <div style={{ position: "relative" }}>
                   <select
+                    id="profile-city"
                     value={formData.city}
                     onChange={(e) =>
                       setFormData({ ...formData, city: e.target.value })
@@ -350,6 +371,7 @@ export default function ProfilePage() {
               {/* Area */}
               <div>
                 <label
+                  htmlFor="profile-area"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -361,6 +383,7 @@ export default function ProfilePage() {
                   Area / District
                 </label>
                 <input
+                  id="profile-area"
                   type="text"
                   placeholder="Enter your area"
                   value={formData.area}
@@ -382,6 +405,7 @@ export default function ProfilePage() {
               {/* Address */}
               <div>
                 <label
+                  htmlFor="profile-address"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -393,6 +417,7 @@ export default function ProfilePage() {
                   Address Details
                 </label>
                 <textarea
+                  id="profile-address"
                   placeholder="Building, floor, landmarks..."
                   value={formData.address}
                   onChange={(e) =>

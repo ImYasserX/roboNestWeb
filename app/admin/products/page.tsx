@@ -14,6 +14,7 @@ export default function AdminProductsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState("");
 
   const loadProducts = async () => {
     try {
@@ -31,13 +32,14 @@ export default function AdminProductsPage() {
 
   const handleDelete = async (id: string) => {
     setDeleting(true);
+    setDeleteError("");
     try {
       await deleteProduct(id);
       setProducts((prev) => prev.filter((p) => p.id !== id));
       setDeleteConfirmId(null);
     } catch (error) {
       console.error("Error deleting product:", error);
-      alert("Failed to delete product");
+      setDeleteError("Failed to delete product. Please try again.");
     }
     setDeleting(false);
   };
@@ -96,6 +98,21 @@ export default function AdminProductsPage() {
 
   return (
     <div>
+      {deleteError && (
+        <div
+          style={{
+            padding: "12px 16px",
+            background: "#FEF2F2",
+            color: "#EF4444",
+            borderRadius: 12,
+            fontSize: 14,
+            marginBottom: 16,
+          }}
+        >
+          {deleteError}
+        </div>
+      )}
+
       {/* Header */}
       <div
         style={{

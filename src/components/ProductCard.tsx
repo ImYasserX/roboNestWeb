@@ -1,13 +1,18 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShoppingCart, Heart, Star } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Heart, ShoppingCart, Star } from "lucide-react";
 import { Product } from "@/src/data/products";
 import { useAuth } from "@/src/context/AuthContext";
 import { useCart } from "@/src/context/CartContext";
-import { addToWishlist, removeFromWishlist } from "@/lib/wishlist";
+import {
+  addToWishlist,
+  isInWishlist as checkIsInWishlist,
+  removeFromWishlist,
+} from "@/lib/wishlist";
 import { formatPrice } from "@/src/lib/currency";
 
 const categoryEmoji: Record<string, string> = {
@@ -21,170 +26,128 @@ const categoryEmoji: Record<string, string> = {
   Tools: "🔧",
 };
 
-const tap = (fn: () => void) => ({
-  onTouchStart: (e: React.TouchEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    fn();
-  },
-  onClick: (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    fn();
-  },
-});
-
 interface ProductCardProps {
   product: Product;
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const router = useRouter();
   const { user } = useAuth();
   const { addItem } = useCart();
+
   const [isWishlisted, setIsWishlisted] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
 
-  const handleWishlistClick = useCallback(async () => {
+  useEffect(() => {
     if (!user?.uid) {
-      console.error("No user logged in");
+      setIsWishlisted(false);
       return;
     }
 
-    try {
-      if (isWishlisted) {
-        console.log("[ProductCard] REMOVING from wishlist", { userId: user.uid, productId: product.id });
-        await removeFromWishlist(user.uid, product.id);
-        setIsWishlisted(false);
-        console.log("[ProductCard] wishlist removed from card", product.id);
-      } else {
-        console.log("[ProductCard] ADDING to wishlist", { userId: user.uid, productId: product.id });
-        await addToWishlist(user.uid, product.id);
-        setIsWishlisted(true);
-        console.log("[ProductCard] wishlist added from card", product.id);
+    let active = true;
+
+    const loadWishlistState = async () => {
+      try {
+        const exists = await checkIsInWishlist(user.uid, product.id);
+        if (active) {
+          setIsWishlisted(exists);
+        }
+      } catch {
+        if (active) {
+          setIsWishlisted(false);
+        }
       }
-    } catch (err) {
-      console.error("wishlist add/remove failed:", err, {
-        userId: user.uid,
-        productId: product.id,
-      });
+    };
+
+    loadWishlistState();
+
+    return () => {
+      active = false;
+    };
+  }, [product.id, user]);
+
+  const handleWishlistClick = useCallback(async () => {
+    if (!user?.uid) {
+      router.push(`/login?redirect=/products/${product.id}`);
+      return;
     }
-  }, [user, isWishlisted, product.id]);
+
+    const nextState = !isWishlisted;
+    setIsWishlisted(nextState);
+
+    try {
+      if (nextState) {
+        await addToWishlist(user.uid, product.id);
+      } else {
+        await removeFromWishlist(user.uid, product.id);
+      }
+    } catch {
+      setIsWishlisted(!nextState);
+    }
+  }, [isWishlisted, product.id, router, user]);
+
+  const handleAddToCart = useCallback(() => {
+    addItem(product);
+  }, [addItem, product]);
 
   const savings = product.originalPrice
     ? product.originalPrice - product.price
     : 0;
 
+  const productHref = `/products/${product.id}`;
+
   return (
-    <Link
-      href={`/products/${product.id}`}
-      className="block h-full"
-      style={{
-        background: "#fff",
-        borderRadius: 16,
-        overflow: "hidden",
-        textDecoration: "none",
-        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-        transition: "box-shadow 0.3s, transform 0.3s",
-      }}
+    <article
+      className="flex h-full flex-col overflow-hidden rounded-2xl bg-white shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-transform duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(30,30,47,0.08)]"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Image Area */}
-      <div
-        style={{
-          position: "relative",
-          width: "100%",
-          aspectRatio: "1",
-          background: "linear-gradient(135deg, #F8F9FF, #F0EFFE)",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          overflow: "hidden",
-        }}
-      >
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt={product.name}
-            fill
-            style={{ objectFit: "contain", padding: 12 }}
-            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
-          />
-        ) : (
-          <span
-            style={{ fontSize: "3rem" }}
-            role="img"
-            aria-label={product.category}
-          >
-            {product.emoji || categoryEmoji[product.category] || "📦"}
-          </span>
-        )}
-
-        {/* Badges */}
-        <div
-          style={{
-            position: "absolute",
-            top: 8,
-            left: 8,
-            display: "flex",
-            flexDirection: "column",
-            gap: 4,
-          }}
+      <div className="relative aspect-square overflow-hidden bg-[linear-gradient(135deg,#F8F9FF,#F0EFFE)]">
+        <Link
+          href={productHref}
+          aria-label={`View ${product.name}`}
+          className="absolute inset-0 z-0"
         >
-          {product.isNew && (
+          {product.imageUrl ? (
+            <Image
+              src={product.imageUrl}
+              alt={product.name}
+              fill
+              style={{ objectFit: "contain", padding: 12 }}
+              sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+            />
+          ) : (
             <span
-              style={{
-                padding: "3px 8px",
-                background: "#F0EFFE",
-                color: "#6C5CE7",
-                fontSize: 9,
-                fontWeight: 700,
-                borderRadius: 999,
-                textTransform: "uppercase",
-              }}
+              className="flex h-full w-full items-center justify-center text-[3rem]"
+              role="img"
+              aria-label={product.category}
             >
-              NEW
+              {product.emoji || categoryEmoji[product.category] || "📦"}
+            </span>
+          )}
+        </Link>
+
+        <div className="absolute left-2 top-2 z-10 flex flex-col gap-1">
+          {product.isNew && (
+            <span className="rounded-full bg-[#F0EFFE] px-2 py-1 text-[9px] font-bold uppercase tracking-[0.08em] text-[#6C5CE7]">
+              New
             </span>
           )}
           {product.discount && (
-            <span
-              style={{
-                padding: "3px 8px",
-                background: "#FEF2F2",
-                color: "#EF4444",
-                fontSize: 9,
-                fontWeight: 700,
-                borderRadius: 999,
-              }}
-            >
+            <span className="rounded-full bg-[#FEF2F2] px-2 py-1 text-[9px] font-bold text-[#EF4444]">
               -{product.discount}%
             </span>
           )}
         </div>
 
-        {/* Wishlist Button */}
         <button
-          {...tap(handleWishlistClick)}
-          style={{
-            position: "absolute",
-            top: 8,
-            right: 8,
-            width: 32,
-            height: 32,
-            background: "#fff",
-            border: "none",
-            borderRadius: 999,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            cursor: "pointer",
-            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            touchAction: "manipulation",
-            WebkitTapHighlightColor: "transparent",
-          }}
+          type="button"
+          onClick={handleWishlistClick}
+          className="absolute right-2 top-2 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white shadow-[0_2px_8px_rgba(0,0,0,0.1)] transition hover:bg-[#F8F9FF]"
+          aria-label={isWishlisted ? "Remove from wishlist" : "Add to wishlist"}
         >
           <Heart
-            size={16}
+            size={18}
             style={{
               color: isWishlisted ? "#EF4444" : "#6B6B8A",
               fill: isWishlisted ? "#EF4444" : "transparent",
@@ -192,83 +155,36 @@ export default function ProductCard({ product }: ProductCardProps) {
           />
         </button>
 
-        {/* Desktop Add to Cart - slides up on hover */}
         <button
-          {...tap(() => addItem(product))}
-          className="hidden md:flex items-center justify-center"
+          type="button"
+          onClick={handleAddToCart}
+          className="absolute inset-x-2 bottom-2 z-10 hidden items-center justify-center gap-2 rounded-full bg-[#6C5CE7] px-4 py-2 text-xs font-semibold text-white transition md:flex"
           style={{
-            position: "absolute",
-            bottom: 8,
-            left: 8,
-            right: 8,
-            padding: "8px 12px",
-            background: "#6C5CE7",
-            color: "#fff",
-            border: "none",
-            borderRadius: 999,
-            fontSize: 12,
-            fontWeight: 600,
-            gap: 6,
-            cursor: "pointer",
             opacity: isHovered ? 1 : 0,
             transform: isHovered ? "translateY(0)" : "translateY(10px)",
-            transition: "opacity 0.2s, transform 0.2s",
-            touchAction: "manipulation",
-            WebkitTapHighlightColor: "transparent",
           }}
+          aria-label={`Add ${product.name} to cart`}
         >
           <ShoppingCart size={14} />
           Add to Cart
         </button>
       </div>
 
-      {/* Content - No absolute positioning */}
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          padding: 12,
-          gap: 4,
-        }}
-      >
-        {/* Brand */}
-        <span
-          style={{
-            fontSize: 9,
-            fontWeight: 600,
-            color: "#6B6B8A",
-            textTransform: "uppercase",
-            letterSpacing: 0.5,
-          }}
-        >
+      <div className="flex flex-1 flex-col gap-1.5 p-3">
+        <span className="text-[9px] font-semibold uppercase tracking-[0.08em] text-[#6B6B8A]">
           {product.brand}
         </span>
 
-        {/* Name */}
-        <h3
-          style={{
-            fontSize: 12,
-            fontWeight: 700,
-            color: "#1E1E2F",
-            lineHeight: 1.3,
-            minHeight: "2.6em",
-            display: "-webkit-box",
-            WebkitLineClamp: 2,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-          }}
-        >
-          {product.name}
+        <h3 className="min-h-[2.6em] text-sm font-bold leading-[1.3] text-[#1E1E2F]">
+          <Link
+            href={productHref}
+            className="line-clamp-2 transition-colors hover:text-[#6C5CE7]"
+          >
+            {product.name}
+          </Link>
         </h3>
 
-        {/* Rating */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: 2,
-          }}
-        >
+        <div className="flex items-center gap-0.5">
           {[1, 2, 3, 4, 5].map((star) => (
             <Star
               key={star}
@@ -279,84 +195,40 @@ export default function ProductCard({ product }: ProductCardProps) {
               }}
             />
           ))}
-          <span
-            style={{
-              fontSize: 10,
-              color: "#6B6B8A",
-              marginLeft: 2,
-            }}
-          >
+          <span className="ml-1 text-[10px] text-[#6B6B8A]">
             ({product.reviewCount})
           </span>
         </div>
 
-        {/* Price Row - includes mobile cart button */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            marginTop: 4,
-          }}
-        >
+        <div className="mt-auto flex items-center justify-between pt-1">
           <div>
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              <span
-                style={{
-                  fontSize: 15,
-                  fontWeight: 800,
-                  color: "#6C5CE7",
-                }}
-              >
+            <div className="flex items-center gap-1.5">
+              <span className="text-[15px] font-extrabold text-[#6C5CE7]">
                 {formatPrice(product.price)}
               </span>
               {product.originalPrice && (
-                <span
-                  style={{
-                    fontSize: 11,
-                    color: "#9CA3AF",
-                    textDecoration: "line-through",
-                  }}
-                >
+                <span className="text-[11px] text-[#9CA3AF] line-through">
                   {formatPrice(product.originalPrice)}
                 </span>
               )}
             </div>
             {savings > 0 && (
-              <span
-                style={{
-                  fontSize: 10,
-                  fontWeight: 600,
-                  color: "#10B981",
-                  display: "block",
-                }}
-              >
+              <span className="block text-[10px] font-semibold text-[#10B981]">
                 Save {formatPrice(savings)}
               </span>
             )}
           </div>
 
-          {/* Mobile Add to Cart Button - in document flow, not absolute */}
           <button
-            {...tap(() => addItem(product))}
-            className="flex md:hidden items-center justify-center"
-            style={{
-              width: 36,
-              height: 36,
-              background: "#6C5CE7",
-              border: "none",
-              borderRadius: 999,
-              cursor: "pointer",
-              flexShrink: 0,
-              boxShadow: "0 2px 8px rgba(108,92,231,0.3)",
-              touchAction: "manipulation",
-              WebkitTapHighlightColor: "transparent",
-            }}
+            type="button"
+            onClick={handleAddToCart}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-[#6C5CE7] shadow-[0_2px_8px_rgba(108,92,231,0.3)] transition hover:brightness-105 md:hidden"
+            aria-label={`Add ${product.name} to cart`}
           >
             <ShoppingCart size={16} color="#fff" />
           </button>
         </div>
       </div>
-    </Link>
+    </article>
   );
 }

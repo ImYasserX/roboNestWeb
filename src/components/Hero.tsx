@@ -94,14 +94,13 @@ export default function Hero() {
       />
 
       {/* Content */}
-      <div className="mx-auto w-full max-w-7xl rounded-2xl overflow-hidden">
-        <PageContainer style={{ paddingBlock: "48px", minHeight: 400 }}>
-          <div
-            className="relative z-20 flex flex-col md:flex-row items-center justify-between gap-8 w-full"
-            style={{
-              minHeight: 400,
-            }}
-          >
+      <PageContainer style={{ paddingBlock: "48px", minHeight: 400 }}>
+        <div
+          className="relative z-20 flex w-full flex-col items-center justify-between gap-8 md:flex-row"
+          style={{
+            minHeight: 400,
+          }}
+        >
           {/* Left Content */}
           <AnimatePresence mode="wait">
             <motion.div
@@ -230,7 +229,6 @@ export default function Hero() {
           </AnimatePresence>
         </div>
       </PageContainer>
-      </div>
 
       {/* Navigation Arrows - Hidden on mobile */}
       <button

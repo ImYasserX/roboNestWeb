@@ -6,6 +6,7 @@ import Image from "next/image";
 import { Heart, ShoppingCart, X, ArrowRight } from "lucide-react";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PageContainer from "@/src/components/PageContainer";
 import { formatPrice } from "@/src/lib/currency";
 import { useAuth } from "@/src/context/AuthContext";
 import { useCart } from "@/src/context/CartContext";
@@ -32,7 +33,6 @@ export default function WishlistPage() {
   const handleRemove = useCallback(
     async (productId: string) => {
       if (!user) {
-        console.warn("[WishlistPage] remove skipped: no authenticated user");
         return;
       }
 
@@ -64,14 +64,7 @@ export default function WishlistPage() {
             paddingTop: 66,
           }}
         >
-          <div
-            style={{
-              maxWidth: 1440,
-              margin: "0 auto",
-              padding: "24px 16px",
-            }}
-            className="md:px-8"
-          >
+          <PageContainer className="md:px-8" style={{ paddingBlock: "24px" }}>
             <div style={{ marginBottom: 24 }}>
               <h1
                 style={{
@@ -93,7 +86,7 @@ export default function WishlistPage() {
               </p>
             </div>
             <LoadingState />
-          </div>
+          </PageContainer>
         </main>
         <Footer />
       </>
@@ -111,14 +104,7 @@ export default function WishlistPage() {
             paddingTop: 66,
           }}
         >
-          <div
-            style={{
-              maxWidth: 1440,
-              margin: "0 auto",
-              padding: "24px 16px",
-            }}
-            className="md:px-8"
-          >
+          <PageContainer className="md:px-8" style={{ paddingBlock: "24px" }}>
             <div style={{ marginBottom: 24 }}>
               <h1
                 style={{
@@ -140,7 +126,7 @@ export default function WishlistPage() {
               </p>
             </div>
             <AuthRequiredState />
-          </div>
+          </PageContainer>
         </main>
         <Footer />
       </>
@@ -157,14 +143,7 @@ export default function WishlistPage() {
           paddingTop: 66,
         }}
       >
-        <div
-          style={{
-            maxWidth: 1440,
-            margin: "0 auto",
-            padding: "24px 16px",
-          }}
-          className="md:px-8"
-        >
+        <PageContainer className="md:px-8" style={{ paddingBlock: "24px" }}>
           <div style={{ marginBottom: 24 }}>
             <h1
               style={{
@@ -214,7 +193,7 @@ export default function WishlistPage() {
               ))}
             </div>
           )}
-        </div>
+        </PageContainer>
       </main>
       <Footer />
     </>

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PageContainer from "@/src/components/PageContainer";
 import { useCart } from "@/src/context/CartContext";
 import { useAuth } from "@/src/context/AuthContext";
 import { formatPrice } from "@/src/lib/currency";
@@ -111,13 +112,7 @@ export default function CartPage() {
     <main style={{ paddingTop: 66, minHeight: "100vh" }}>
       <Navbar />
 
-      <div
-        style={{
-          maxWidth: 1440,
-          margin: "0 auto",
-          padding: "24px 16px",
-        }}
-      >
+      <PageContainer style={{ paddingBlock: "24px" }}>
         <h1
           style={{
             fontSize: 28,
@@ -443,7 +438,7 @@ export default function CartPage() {
             </Link>
           </div>
         </div>
-      </div>
+      </PageContainer>
 
       <Footer />
     </main>

@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PageContainer from "@/src/components/PageContainer";
 import { useAuth } from "@/src/context/AuthContext";
 import { db } from "@/src/lib/firebase";
 import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
-import { Order } from "@/src/data/products";
+import { Order, TimestampLike } from "@/src/data/products";
 import { formatPrice } from "@/src/lib/currency";
 import {
   Package,
@@ -54,6 +55,32 @@ const statusConfig = {
     icon: XCircle,
   },
 };
+
+function formatOrderDate(timestamp: TimestampLike): string {
+  if (!timestamp) return "";
+  if (timestamp instanceof Date) {
+    return timestamp.toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+  if (typeof timestamp.toDate === "function") {
+    return timestamp.toDate().toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+  if (typeof timestamp.seconds === "number") {
+    return new Date(timestamp.seconds * 1000).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    });
+  }
+  return "";
+}
 
 export default function OrdersPage() {
   const router = useRouter();
@@ -207,39 +234,34 @@ export default function OrdersPage() {
     <main style={{ paddingTop: 66, minHeight: "100vh" }}>
       <Navbar />
 
-      <div
-        style={{
-          maxWidth: 900,
-          margin: "0 auto",
-          padding: "24px 16px",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: 28,
-            fontWeight: 800,
-            color: "#1E1E2F",
-            marginBottom: 24,
-          }}
-        >
-          My Orders
-        </h1>
+      <PageContainer style={{ paddingBlock: "24px" }}>
+        <div style={{ maxWidth: 900 }}>
+          <h1
+            style={{
+              fontSize: 28,
+              fontWeight: 800,
+              color: "#1E1E2F",
+              marginBottom: 24,
+            }}
+          >
+            My Orders
+          </h1>
 
-        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-          {orders.map((order) => {
-            const status = statusConfig[order.status];
-            const StatusIcon = status.icon;
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {orders.map((order) => {
+              const status = statusConfig[order.status];
+              const StatusIcon = status.icon;
 
-            return (
-              <div
-                key={order.id}
-                style={{
-                  background: "#fff",
-                  borderRadius: 20,
-                  padding: 24,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                }}
-              >
+              return (
+                <div
+                  key={order.id}
+                  style={{
+                    background: "#fff",
+                    borderRadius: 20,
+                    padding: 24,
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                  }}
+                >
                 {/* Header */}
                 <div
                   style={{
@@ -269,13 +291,7 @@ export default function OrdersPage() {
                     </div>
                     {order.createdAt && (
                       <div style={{ fontSize: 13, color: "#6B6B8A", marginTop: 4 }}>
-                        {new Date(
-                          (order.createdAt as { seconds: number }).seconds * 1000
-                        ).toLocaleDateString("en-US", {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        })}
+                        {formatOrderDate(order.createdAt)}
                       </div>
                     )}
                   </div>
@@ -375,11 +391,12 @@ export default function OrdersPage() {
                     </span>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
+      </PageContainer>
 
       <Footer />
     </main>

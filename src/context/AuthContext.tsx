@@ -80,10 +80,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
-      console.log("[Auth] auth state changed", {
-        uid: currentUser?.uid || null,
-        loggedIn: Boolean(currentUser),
-      });
       setUser(currentUser);
       
       if (currentUser) {

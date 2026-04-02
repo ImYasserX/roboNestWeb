@@ -5,11 +5,11 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PageContainer from "@/src/components/PageContainer";
 import { useCart } from "@/src/context/CartContext";
 import { useAuth } from "@/src/context/AuthContext";
 import { iraqCities } from "@/src/data/products";
-import { db } from "@/src/lib/firebase";
-import { collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { getAuthToken } from "@/src/lib/auth";
 import { formatPrice } from "@/src/lib/currency";
 import {
   MapPin,
@@ -48,6 +48,7 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const [orderId, setOrderId] = useState("");
+  const [submitError, setSubmitError] = useState("");
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -95,41 +96,53 @@ export default function CheckoutPage() {
     if (!validateForm() || !user) return;
 
     setSubmitting(true);
+    setSubmitError("");
     try {
-      const order = {
-        userId: user.uid,
-        items: items.map((item) => ({
-          productId: item.productId,
-          name: item.name,
-          price: item.price,
-          emoji: item.emoji,
-          quantity: item.quantity,
-        })),
-        subtotal: totalPrice,
-        deliveryFee: DELIVERY_FEE,
-        total: totalPrice + DELIVERY_FEE,
-        status: "pending",
-        paymentMethod: "cod",
-        delivery: {
-          fullName: formData.fullName,
-          phone: `+964${formData.phone}`,
-          city: formData.city,
-          area: formData.area,
-          details: formData.details,
-        },
-        createdAt: serverTimestamp(),
-        updatedAt: serverTimestamp(),
-      };
+      const token = await getAuthToken();
 
-      const docRef = await addDoc(collection(db, "orders"), order);
-      setOrderId(docRef.id);
+      if (!token) {
+        throw new Error("Your session has expired. Please sign in again.");
+      }
+
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items: items.map((item) => ({
+            productId: item.productId,
+            quantity: item.quantity,
+          })),
+          delivery: {
+            fullName: formData.fullName,
+            phone: formData.phone,
+            city: formData.city,
+            area: formData.area,
+            details: formData.details,
+          },
+        }),
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || "Failed to place order.");
+      }
+
+      setOrderId(result.orderId);
       setOrderSuccess(true);
       clearCart();
     } catch (error) {
-      console.error("Error creating order:", error);
-      alert("Failed to place order. Please try again.");
+      setSubmitError(
+        error instanceof Error
+          ? error.message
+          : "Failed to place order. Please try again."
+      );
+    } finally {
+      setSubmitting(false);
     }
-    setSubmitting(false);
   };
 
   if (authLoading) {
@@ -349,13 +362,7 @@ export default function CheckoutPage() {
     <main style={{ paddingTop: 66, minHeight: "100vh" }}>
       <Navbar />
 
-      <div
-        style={{
-          maxWidth: 1440,
-          margin: "0 auto",
-          padding: "24px 16px",
-        }}
-      >
+      <PageContainer style={{ paddingBlock: "24px" }}>
         <h1
           style={{
             fontSize: 28,
@@ -402,6 +409,7 @@ export default function CheckoutPage() {
               {/* Full Name */}
               <div>
                 <label
+                  htmlFor="checkout-full-name"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -425,6 +433,7 @@ export default function CheckoutPage() {
                 >
                   <User size={20} style={{ color: "#6B6B8A" }} />
                   <input
+                    id="checkout-full-name"
                     type="text"
                     placeholder="Enter your full name"
                     value={formData.fullName}
@@ -452,6 +461,7 @@ export default function CheckoutPage() {
               {/* Phone */}
               <div>
                 <label
+                  htmlFor="checkout-phone"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -486,6 +496,7 @@ export default function CheckoutPage() {
                     +964
                   </span>
                   <input
+                    id="checkout-phone"
                     type="tel"
                     placeholder="07XX XXX XXXX"
                     value={formData.phone}
@@ -513,6 +524,7 @@ export default function CheckoutPage() {
               {/* City */}
               <div>
                 <label
+                  htmlFor="checkout-city"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -525,6 +537,7 @@ export default function CheckoutPage() {
                 </label>
                 <div style={{ position: "relative" }}>
                   <select
+                    id="checkout-city"
                     value={formData.city}
                     onChange={(e) =>
                       setFormData({ ...formData, city: e.target.value })
@@ -570,6 +583,7 @@ export default function CheckoutPage() {
               {/* Area */}
               <div>
                 <label
+                  htmlFor="checkout-area"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -581,6 +595,7 @@ export default function CheckoutPage() {
                   Area / District *
                 </label>
                 <input
+                  id="checkout-area"
                   type="text"
                   placeholder="Enter your area or district"
                   value={formData.area}
@@ -607,6 +622,7 @@ export default function CheckoutPage() {
               {/* Address Details */}
               <div>
                 <label
+                  htmlFor="checkout-details"
                   style={{
                     display: "block",
                     fontSize: 14,
@@ -618,6 +634,7 @@ export default function CheckoutPage() {
                   Address Details (Optional)
                 </label>
                 <textarea
+                  id="checkout-details"
                   placeholder="Building name, floor, apartment number, nearby landmarks..."
                   value={formData.details}
                   onChange={(e) =>
@@ -842,9 +859,22 @@ export default function CheckoutPage() {
                 </>
               )}
             </button>
+
+            {submitError && (
+              <p
+                style={{
+                  marginTop: 12,
+                  fontSize: 13,
+                  lineHeight: 1.5,
+                  color: "#DC2626",
+                }}
+              >
+                {submitError}
+              </p>
+            )}
           </div>
         </div>
-      </div>
+      </PageContainer>
 
       <Footer />
     </main>

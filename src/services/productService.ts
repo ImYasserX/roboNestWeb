@@ -19,6 +19,8 @@ import {
 import { db } from "@/src/lib/firebase";
 import { Product, sampleProducts } from "@/src/data/products";
 
+const allowFallbackData = process.env.NODE_ENV !== "production";
+
 // Firestore product document structure
 export interface FirestoreProduct {
   id: string;
@@ -52,6 +54,7 @@ function mapFirestoreToProduct(docData: FirestoreProduct): Product {
     discount: docData.discount,
     emoji: docData.emoji || "📦",
     imageUrl: docData.imageUrl || (docData.images && docData.images[0]),
+    images: docData.images || (docData.imageUrl ? [docData.imageUrl] : undefined),
     isNew: docData.isNew,
     rating: docData.rating || 4.0,
     reviewCount: docData.reviewCount || 0,
@@ -117,7 +120,14 @@ export async function fetchProducts(
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      // No products in Firestore, use fallback
+      if (!allowFallbackData) {
+        return {
+          products: [],
+          categories: [],
+          source: "firebase",
+        };
+      }
+
       return {
         products: sampleProducts,
         categories: [...new Set(sampleProducts.map((p) => p.category))],
@@ -139,8 +149,15 @@ export async function fetchProducts(
       source: "firebase",
     };
   } catch (error) {
-    // Return fallback data on error (silent fallback for better UX)
-    console.log("[Products] Using demo data (Firebase not configured or permission denied)");
+    if (!allowFallbackData) {
+      return {
+        products: [],
+        categories: [],
+        source: "firebase",
+        error: error instanceof Error ? error.message : "Unknown error",
+      };
+    }
+
     return {
       products: sampleProducts,
       categories: [...new Set(sampleProducts.map((p) => p.category))],
@@ -161,13 +178,14 @@ export async function fetchProductById(id: string): Promise<Product | null> {
       return mapFirestoreToProduct({ id: docSnap.id, ...data });
     }
 
-    // Fallback to sample products
-    const fallbackProduct = sampleProducts.find((p) => p.id === id);
+    const fallbackProduct = allowFallbackData
+      ? sampleProducts.find((p) => p.id === id)
+      : null;
     return fallbackProduct || null;
   } catch (error) {
-    // Fallback to sample products on error (silent for better UX)
-    console.log("[Products] Using demo product (Firebase not accessible)");
-    const fallbackProduct = sampleProducts.find((p) => p.id === id);
+    const fallbackProduct = allowFallbackData
+      ? sampleProducts.find((p) => p.id === id)
+      : null;
     return fallbackProduct || null;
   }
 }
@@ -257,7 +275,10 @@ export async function fetchRelatedProducts(
     const snapshot = await getDocs(q);
 
     if (snapshot.empty) {
-      // Fallback to sample products
+      if (!allowFallbackData) {
+        return [];
+      }
+
       return sampleProducts
         .filter((p) => p.category === category && p.id !== excludeId)
         .slice(0, limitCount);
@@ -273,8 +294,10 @@ export async function fetchRelatedProducts(
 
     return products;
   } catch (error) {
-    // Fallback to sample products (silent for better UX)
-    console.log("[Products] Using demo related products");
+    if (!allowFallbackData) {
+      return [];
+    }
+
     return sampleProducts
       .filter((p) => p.category === category && p.id !== excludeId)
       .slice(0, limitCount);
@@ -288,7 +311,9 @@ export async function fetchCategories(): Promise<string[]> {
     const snapshot = await getDocs(productsRef);
 
     if (snapshot.empty) {
-      return [...new Set(sampleProducts.map((p) => p.category))];
+      return allowFallbackData
+        ? [...new Set(sampleProducts.map((p) => p.category))]
+        : [];
     }
 
     const categories = new Set<string>();
@@ -301,7 +326,8 @@ export async function fetchCategories(): Promise<string[]> {
 
     return Array.from(categories);
   } catch (error) {
-    console.log("[Products] Using demo categories");
-    return [...new Set(sampleProducts.map((p) => p.category))];
+    return allowFallbackData
+      ? [...new Set(sampleProducts.map((p) => p.category))]
+      : [];
   }
 }

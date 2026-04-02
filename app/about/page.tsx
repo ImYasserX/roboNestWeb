@@ -1,14 +1,35 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
+import type { LucideIcon } from "lucide-react";
+import {
+  ArrowRight,
+  BadgeDollarSign,
+  Bot,
+  Briefcase,
+  CircuitBoard,
+  Cpu,
+  GraduationCap,
+  MapPin,
+  Rocket,
+  Settings2,
+  Target,
+  Wrench,
+} from "lucide-react";
+import Footer from "@/src/components/Footer";
+import Navbar from "@/src/components/Navbar";
+import PageContainer from "@/src/components/PageContainer";
 
 const brandColors = {
   bgLight: "#F8F9FF",
-  primary: "#2563eb",
-  primaryHover: "#1d4ed8",
-  primaryLight: "#dbeafe",
-  textDark: "#111827",
-  textMuted: "#4b5563",
+  primary: "#6C5CE7",
+  primaryHover: "#5B4BD6",
+  primaryLight: "#F0EFFE",
+  surface: "#FFFFFF",
+  textDark: "#1E1E2F",
+  textMuted: "#6B6B8A",
+  border: "#E4E6F1",
 };
 
 const intro = [
@@ -17,29 +38,63 @@ const intro = [
   "Engineering service provider",
 ];
 
-const whatWeDo = [
+const whatWeDo: {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}[] = [
   {
     title: "Component Store",
-    description: "Arduino, ESP boards, sensors, IoT modules, robotics kits",
+    description: "Arduino, ESP boards, sensors, IoT modules, robotics kits.",
+    icon: Cpu,
   },
   {
     title: "Custom Robotics",
-    description: "Custom robotics builds tailored to your project needs",
+    description: "Custom robotics builds tailored to your project needs.",
+    icon: Bot,
   },
   {
     title: "Engineering Services",
-    description: "3D printing, CAD design, prototyping, product assembly",
+    description: "3D printing, CAD design, prototyping, and product assembly.",
+    icon: Wrench,
   },
 ];
 
-const whyRoboNest = [
-  { title: "Cheapest items in the market", icon: "💰" },
-  { title: "Wide range of services", icon: "🔧" },
-  { title: "Not just reselling — real engineering", icon: "⚙️" },
-  { title: "Supports beginners and advanced users", icon: "🎓" },
+const whyRoboNest: {
+  title: string;
+  description: string;
+  icon: LucideIcon;
+}[] = [
+  {
+    title: "Affordable sourcing",
+    description: "Competitive pricing on the core components people actually need.",
+    icon: BadgeDollarSign,
+  },
+  {
+    title: "Hands-on engineering",
+    description: "We do more than resell parts. We build, test, and solve.",
+    icon: Settings2,
+  },
+  {
+    title: "Wide service range",
+    description: "From quick component orders to full prototype support.",
+    icon: CircuitBoard,
+  },
+  {
+    title: "Built for every level",
+    description: "Helpful for beginners and capable enough for advanced teams.",
+    icon: GraduationCap,
+  },
 ];
 
-const targetUsers = ["Students", "Engineers", "Robotics builders"];
+const targetUsers: {
+  label: string;
+  icon: LucideIcon;
+}[] = [
+  { label: "Students", icon: GraduationCap },
+  { label: "Engineers", icon: Briefcase },
+  { label: "Robotics builders", icon: Bot },
+];
 
 const mission =
   "Make robotics and electronics accessible and affordable while delivering professional engineering capability for every project.";
@@ -53,458 +108,523 @@ const team = [
   { name: "Ayman Ramadhan", role: "Co-Founder" },
 ];
 
-export default function App() {
+const reveal = {
+  initial: { opacity: 0, y: 18 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.18 },
+};
+
+const milestoneCards = [
+  { title: "Our Mission", body: mission, icon: Target },
+  { title: "Our Vision", body: vision, icon: Rocket },
+];
+
+function SectionTitle({
+  title,
+  subtitle,
+}: {
+  title: string;
+  subtitle: string;
+}) {
   return (
-    <div
-      className="min-h-screen w-full font-sans"
-      style={{ backgroundColor: brandColors.bgLight }}
+    <motion.div
+      {...reveal}
+      transition={{ duration: 0.45 }}
+      className="mx-auto max-w-3xl text-center"
     >
-      {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-br from-white to-[#f0f2ff] px-6 py-20 lg:py-24">
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
+      <h2
+        className="text-3xl font-bold md:text-4xl"
+        style={{ color: brandColors.textDark }}
+      >
+        {title}
+      </h2>
+      <p
+        className="mt-4 text-base leading-relaxed md:text-lg"
+        style={{ color: brandColors.textMuted }}
+      >
+        {subtitle}
+      </p>
+    </motion.div>
+  );
+}
+
+export default function AboutPage() {
+  return (
+    <>
+      <Navbar />
+      <main
+        style={{
+          paddingTop: 66,
+          minHeight: "100vh",
+          background: brandColors.bgLight,
+        }}
+      >
+        <div className="flex flex-col gap-14 pb-20 pt-10 lg:gap-20 lg:pb-24 lg:pt-12">
+          <PageContainer as="section">
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              transition={{ delay: 0.2, duration: 0.5 }}
-              className="mb-4 inline-block rounded-full px-4 py-2 text-sm font-medium"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.55 }}
+              className="overflow-hidden rounded-[32px] border px-6 py-12 text-center shadow-[0_16px_48px_-36px_rgba(108,92,231,0.35)] sm:px-8 lg:px-12 lg:py-16"
               style={{
-                backgroundColor: brandColors.primaryLight,
-                color: brandColors.primary,
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(240,239,254,0.8) 100%)",
+                borderColor: brandColors.border,
               }}
             >
-              🤖 About RoboNest
-            </motion.div>
-
-            <h1
-              className="mb-6 text-4xl font-bold leading-tight md:text-5xl lg:text-6xl"
-              style={{ color: brandColors.textDark }}
-            >
-              Engineering Your{" "}
-              <span style={{ color: brandColors.primary }}>
-                Robotics Future
-              </span>
-            </h1>
-
-            <p
-              className="mx-auto max-w-3xl text-lg leading-relaxed md:text-xl"
-              style={{ color: brandColors.textMuted }}
-            >
-              RoboNest combines an electronics component store, engineering lab,
-              and full-service robotics builder for the Iraq market.
-            </p>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* What We Are */}
-      <section className="bg-white px-6 py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2
-              className="mb-8 text-center text-3xl font-bold md:text-4xl"
-              style={{ color: brandColors.textDark }}
-            >
-              RoboNest is
-            </h2>
-
-Saaud, [01.04.2026 16:38]
-<div className="mx-auto flex max-w-4xl flex-wrap justify-center gap-6">
-              {intro.map((item, index) => (
-                <motion.div
-                  key={item}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.4 }}
-                  className="flex items-center gap-3 rounded-xl border px-6 py-4 shadow-sm transition-shadow hover:shadow-md"
+              <div className="mx-auto max-w-3xl">
+                <div
+                  className="inline-flex items-center rounded-full px-4 py-2 text-sm font-semibold"
                   style={{
-                    backgroundColor: brandColors.bgLight,
-                    borderColor: brandColors.primaryLight,
+                    backgroundColor: brandColors.primaryLight,
+                    color: brandColors.primary,
                   }}
                 >
-                  <div
-                    className="h-3 w-3 rounded-full"
-                    style={{ backgroundColor: brandColors.primary }}
-                  />
-                  <span
-                    className="text-lg font-medium"
-                    style={{ color: brandColors.textDark }}
-                  >
-                    {item}
-                  </span>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
+                  About RoboNest
+                </div>
 
-      {/* What We Do */}
-      <section
-        className="px-6 py-16 lg:py-20"
-        style={{ backgroundColor: brandColors.bgLight }}
-      >
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2
-              className="mb-4 text-center text-3xl font-bold md:text-4xl"
-              style={{ color: brandColors.textDark }}
-            >
-              What We Do
-            </h2>
-
-            <p
-              className="mb-12 text-center text-lg"
-              style={{ color: brandColors.textMuted }}
-            >
-              End-to-end solutions for your robotics and electronics projects
-            </p>
-
-            <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-              {whatWeDo.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.15, duration: 0.5 }}
-                  className="rounded-2xl border border-gray-100 bg-white p-8 shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl"
+                <h1
+                  className="mt-6 text-3xl font-bold leading-tight sm:text-4xl md:text-5xl"
+                  style={{ color: brandColors.textDark }}
                 >
-                  <div
-                    className="mb-4 flex h-12 w-12 items-center justify-center rounded-xl"
-                    style={{ backgroundColor: brandColors.primaryLight }}
+                  Engineering Your{" "}
+                  <span style={{ color: brandColors.primary }}>
+                    Robotics Future
+                  </span>
+                </h1>
+
+                <p
+                  className="mx-auto mt-6 max-w-2xl text-base leading-relaxed md:text-lg"
+                  style={{ color: brandColors.textMuted }}
+                >
+                  RoboNest combines an electronics component store, engineering
+                  lab, and full-service robotics builder for the Iraq market.
+                </p>
+              </div>
+
+              <div className="mx-auto mt-12 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {intro.map((item, index) => (
+                  <motion.div
+                    key={item}
+                    initial={{ opacity: 0, y: 12 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.12 + index * 0.08, duration: 0.35 }}
+                    className="flex items-center justify-center gap-3 rounded-2xl border bg-white px-5 py-4 text-center"
+                    style={{ borderColor: brandColors.border }}
                   >
-                    <div
-                      className="h-6 w-6 rounded-lg"
+                    <span
+                      className="h-2.5 w-2.5 rounded-full"
                       style={{ backgroundColor: brandColors.primary }}
                     />
-                  </div>
+                    <span
+                      className="text-base font-semibold"
+                      style={{ color: brandColors.textDark }}
+                    >
+                      {item}
+                    </span>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </PageContainer>
 
-                  <h3
-                    className="mb-3 text-xl font-bold"
-                    style={{ color: brandColors.textDark }}
-                  >
-                    {item.title}
-                  </h3>
+          <PageContainer as="section">
+            <div
+              className="rounded-[32px] border px-6 py-10 sm:px-8 lg:px-10 lg:py-12"
+              style={{
+                backgroundColor: brandColors.surface,
+                borderColor: brandColors.border,
+              }}
+            >
+              <SectionTitle
+                title="What We Do"
+                subtitle="End-to-end support for robotics and electronics projects, from sourcing to prototyping."
+              />
 
-                  <p
-                    className="leading-relaxed"
-                    style={{ color: brandColors.textMuted }}
-                  >
-                    {item.description}
-                  </p>
-                </motion.div>
-              ))}
+              <div className="mx-auto mt-12 grid max-w-6xl gap-6 md:auto-rows-fr md:grid-cols-2 xl:grid-cols-3">
+                {whatWeDo.map((item, index) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <motion.div
+                      key={item.title}
+                      {...reveal}
+                      transition={{ delay: index * 0.1, duration: 0.45 }}
+                      className="flex h-full flex-col rounded-3xl border p-8"
+                      style={{
+                        backgroundColor: brandColors.bgLight,
+                        borderColor: brandColors.border,
+                      }}
+                    >
+                      <div
+                        className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl"
+                        style={{ backgroundColor: brandColors.primaryLight }}
+                      >
+                        <Icon
+                          className="h-6 w-6"
+                          style={{ color: brandColors.primary }}
+                        />
+                      </div>
+
+                      <h3
+                        className="text-xl font-bold"
+                        style={{ color: brandColors.textDark }}
+                      >
+                        {item.title}
+                      </h3>
+
+                      <p
+                        className="mt-3 text-base leading-relaxed"
+                        style={{ color: brandColors.textMuted }}
+                      >
+                        {item.description}
+                      </p>
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </PageContainer>
 
-      {/* Why RoboNest */}
-      <section className="bg-white px-6 py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2
-              className="mb-4 text-center text-3xl font-bold md:text-4xl"
-              style={{ color: brandColors.textDark }}
-            >
-              Why RoboNest
-            </h2>
-
-Saaud, [01.04.2026 16:38]
-<p
-              className="mb-12 text-center text-lg"
-              style={{ color: brandColors.textMuted }}
-            >
-              What sets us apart from the competition
-            </p>
-
-            <div className="mx-auto grid max-w-4xl gap-6 md:grid-cols-2">
-              {whyRoboNest.map((item, index) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="flex items-start gap-4 rounded-xl border p-6"
-                  style={{
-                    backgroundColor: brandColors.bgLight,
-                    borderColor: brandColors.primaryLight,
-                  }}
+          <PageContainer as="section">
+            <div className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+              <motion.div
+                {...reveal}
+                transition={{ duration: 0.45 }}
+                className="rounded-[32px] border p-8 lg:p-10"
+                style={{
+                  backgroundColor: brandColors.surface,
+                  borderColor: brandColors.border,
+                }}
+              >
+                <h2
+                  className="text-3xl font-bold md:text-4xl"
+                  style={{ color: brandColors.textDark }}
                 >
-                  <div className="text-3xl">{item.icon}</div>
-                  <div>
-                    <p
-                      className="text-lg font-medium"
+                  Why RoboNest
+                </h2>
+                <p
+                  className="mt-5 text-base leading-relaxed md:text-lg"
+                  style={{ color: brandColors.textMuted }}
+                >
+                  We are built around practical engineering support, not just
+                  storefront convenience.
+                </p>
+              </motion.div>
+
+              <div className="grid gap-5 md:auto-rows-fr md:grid-cols-2">
+                {whyRoboNest.map((item, index) => {
+                  const Icon = item.icon;
+
+                  return (
+                    <motion.div
+                      key={item.title}
+                      {...reveal}
+                      transition={{ delay: index * 0.08, duration: 0.45 }}
+                      className="flex h-full flex-col rounded-3xl border p-6"
+                      style={{
+                        backgroundColor: brandColors.surface,
+                        borderColor: brandColors.border,
+                      }}
+                    >
+                      <div
+                        className="mb-4 flex h-12 w-12 items-center justify-center rounded-2xl"
+                        style={{ backgroundColor: brandColors.primaryLight }}
+                      >
+                        <Icon
+                          className="h-5 w-5"
+                          style={{ color: brandColors.primary }}
+                        />
+                      </div>
+
+                      <p
+                        className="text-lg font-semibold"
+                        style={{ color: brandColors.textDark }}
+                      >
+                        {item.title}
+                      </p>
+
+                      <p
+                        className="mt-2 text-base leading-relaxed"
+                        style={{ color: brandColors.textMuted }}
+                      >
+                        {item.description}
+                      </p>
+                    </motion.div>
+                  );
+                })}
+              </div>
+            </div>
+          </PageContainer>
+
+          <PageContainer as="section">
+            <div className="grid gap-6 lg:grid-cols-2">
+              {milestoneCards.map((item, index) => {
+                const Icon = item.icon;
+
+                return (
+                  <motion.div
+                    key={item.title}
+                    {...reveal}
+                    transition={{ delay: index * 0.1, duration: 0.45 }}
+                    className="rounded-[32px] border p-8 lg:p-10"
+                    style={{
+                      background:
+                        "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(240,239,254,0.88) 100%)",
+                      borderColor: brandColors.border,
+                    }}
+                  >
+                    <div
+                      className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl"
+                      style={{ backgroundColor: brandColors.primaryLight }}
+                    >
+                      <Icon
+                        className="h-7 w-7"
+                        style={{ color: brandColors.primary }}
+                      />
+                    </div>
+
+                    <h3
+                      className="text-2xl font-bold"
                       style={{ color: brandColors.textDark }}
                     >
                       {item.title}
+                    </h3>
+
+                    <p
+                      className="mt-4 text-base leading-relaxed md:text-lg"
+                      style={{ color: brandColors.textMuted }}
+                    >
+                      {item.body}
                     </p>
-                  </div>
-                </motion.div>
-              ))}
+                  </motion.div>
+                );
+              })}
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </PageContainer>
 
-      {/* Mission & Vision */}
-      <section
-        className="px-6 py-16 text-white lg:py-20"
-        style={{ backgroundColor: brandColors.primary }}
-      >
-        <div className="mx-auto max-w-6xl">
-          <div className="grid gap-8 lg:grid-cols-2">
-            <div
-              className="rounded-2xl border p-8"
-              style={{
-                backgroundColor: "rgba(255,255,255,0.1)",
-                backdropFilter: "blur(4px)",
-                borderColor: "rgba(255,255,255,0.2)",
-              }}
-            >
-              <div
-                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl"
-                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+          <PageContainer as="section">
+            <div className="grid gap-6 lg:grid-cols-[0.92fr_1.08fr]">
+              <motion.div
+                {...reveal}
+                transition={{ duration: 0.45 }}
+                className="flex h-full flex-col rounded-[32px] border p-8 lg:p-10"
+                style={{
+                  backgroundColor: brandColors.surface,
+                  borderColor: brandColors.border,
+                }}
               >
-                <span className="text-3xl">🎯</span>
-              </div>
-              <h3 className="mb-4 text-2xl font-bold">Our Mission</h3>
-              <p className="text-lg leading-relaxed text-white/90">{mission}</p>
-            </div>
+                <h2
+                  className="text-3xl font-bold md:text-4xl"
+                  style={{ color: brandColors.textDark }}
+                >
+                  Who We Serve
+                </h2>
 
-            <div
-              className="rounded-2xl border p-8"
-              style={{
-                backgroundColor: "rgba(255,255,255,0.1)",
-                backdropFilter: "blur(4px)",
-                borderColor: "rgba(255,255,255,0.2)",
-              }}
-            >
-              <div
-                className="mb-6 flex h-14 w-14 items-center justify-center rounded-xl"
-                style={{ backgroundColor: "rgba(255,255,255,0.2)" }}
+                <p
+                  className="mt-4 text-base leading-relaxed md:text-lg"
+                  style={{ color: brandColors.textMuted }}
+                >
+                  Supporting the robotics community at every level, from first
+                  experiments to professional product work.
+                </p>
+
+                <div className="mt-8 grid gap-4">
+                  {targetUsers.map((user, index) => {
+                    const Icon = user.icon;
+
+                    return (
+                      <motion.div
+                        key={user.label}
+                        {...reveal}
+                        transition={{ delay: index * 0.08, duration: 0.4 }}
+                        className="flex items-center gap-4 rounded-2xl border px-5 py-4"
+                        style={{
+                          backgroundColor: brandColors.bgLight,
+                          borderColor: brandColors.border,
+                        }}
+                      >
+                        <div
+                          className="flex h-11 w-11 items-center justify-center rounded-xl"
+                          style={{ backgroundColor: brandColors.primaryLight }}
+                        >
+                          <Icon
+                            className="h-5 w-5"
+                            style={{ color: brandColors.primary }}
+                          />
+                        </div>
+                        <span
+                          className="text-lg font-semibold"
+                          style={{ color: brandColors.textDark }}
+                        >
+                          {user.label}
+                        </span>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+              </motion.div>
+
+              <motion.div
+                {...reveal}
+                transition={{ delay: 0.1, duration: 0.45 }}
+                className="flex h-full flex-col justify-between rounded-[32px] border p-8 lg:p-10"
+                style={{
+                  backgroundColor: brandColors.surface,
+                  borderColor: brandColors.border,
+                }}
               >
-                <span className="text-3xl">🚀</span>
-              </div>
-              <h3 className="mb-4 text-2xl font-bold">Our Vision</h3>
-              <p className="text-lg leading-relaxed text-white/90">{vision}</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Who We Serve */}
-      <section className="bg-white px-6 py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2
-              className="mb-4 text-3xl font-bold md:text-4xl"
-              style={{ color: brandColors.textDark }}
-            >
-              Who We Serve
-            </h2>
-
-            <p
-              className="mb-12 text-lg"
-              style={{ color: brandColors.textMuted }}
-            >
-              Supporting the robotics community at every level
-            </p>
-
-Saaud, [01.04.2026 16:38]
-<div className="flex flex-wrap justify-center gap-4">
-              {targetUsers.map((user, index) => (
-                <motion.div
-                  key={user}
-                  initial={{ opacity: 0, scale: 0.8 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.4 }}
-                  className="cursor-default rounded-full border-2 px-8 py-4 text-lg font-semibold transition-all"
-                  style={{
-                    backgroundColor: brandColors.bgLight,
-                    borderColor: brandColors.primaryLight,
-                    color: brandColors.textDark,
-                  }}
-                >
-                  {user}
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Team Section */}
-      <section
-        className="px-6 py-16 lg:py-20"
-        style={{ backgroundColor: brandColors.bgLight }}
-      >
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2
-              className="mb-4 text-center text-3xl font-bold md:text-4xl"
-              style={{ color: brandColors.textDark }}
-            >
-              Meet Our Team
-            </h2>
-
-            <p
-              className="mb-12 text-center text-lg"
-              style={{ color: brandColors.textMuted }}
-            >
-              The engineers and innovators behind RoboNest
-            </p>
-
-            <div className="mx-auto grid max-w-5xl gap-8 sm:grid-cols-2 lg:grid-cols-3">
-              {team.map((member, index) => (
-                <motion.div
-                  key={member.name}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1, duration: 0.5 }}
-                  className="rounded-2xl border border-gray-100 bg-white p-8 text-center shadow-lg transition-all hover:shadow-xl"
-                >
+                <div>
                   <div
-                    className="mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white"
-                    style={{
-                      background: `linear-gradient(135deg, ${brandColors.primary}, #60a5fa)`,
-                    }}
+                    className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl"
+                    style={{ backgroundColor: brandColors.primaryLight }}
                   >
-                    {member.name.charAt(0)}
+                    <MapPin
+                      className="h-6 w-6"
+                      style={{ color: brandColors.primary }}
+                    />
                   </div>
 
-                  <h3
-                    className="mb-1 text-xl font-bold"
+                  <h2
+                    className="text-3xl font-bold md:text-4xl"
                     style={{ color: brandColors.textDark }}
                   >
-                    {member.name}
-                  </h3>
+                    Our Location
+                  </h2>
 
                   <p
-                    className="font-medium"
-                    style={{ color: brandColors.primary }}
+                    className="mt-4 text-lg font-semibold"
+                    style={{ color: brandColors.textDark }}
                   >
-                    {member.role}
+                    Currently serving Iraq
                   </p>
-                </motion.div>
-              ))}
+
+                  <p
+                    className="mt-3 max-w-xl text-base leading-relaxed md:text-lg"
+                    style={{ color: brandColors.textMuted }}
+                  >
+                    We are building from Iraq today, with plans to expand our
+                    engineering reach across the wider region.
+                  </p>
+                </div>
+
+                <div
+                  className="mt-8 rounded-2xl px-5 py-4"
+                  style={{ backgroundColor: brandColors.primaryLight }}
+                >
+                  <p
+                    className="text-sm font-semibold uppercase tracking-[0.16em]"
+                    style={{ color: brandColors.primaryHover }}
+                  >
+                    Next step
+                  </p>
+
+                  <p
+                    className="mt-2 text-base leading-relaxed"
+                    style={{ color: brandColors.textMuted }}
+                  >
+                    Growing into a regional robotics and PCB manufacturing
+                    operation.
+                  </p>
+                </div>
+              </motion.div>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </PageContainer>
 
-Saaud, [01.04.2026 16:38]
-{/* Location */}
-      <section className="bg-white px-6 py-16 lg:py-20">
-        <div className="mx-auto max-w-6xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="rounded-3xl border-2 p-10 text-center md:p-12"
-            style={{
-              backgroundColor: brandColors.bgLight,
-              borderColor: brandColors.primaryLight,
-            }}
-          >
-            <div className="mb-4 text-5xl">📍</div>
-            <h2
-              className="mb-3 text-3xl font-bold"
-              style={{ color: brandColors.textDark }}
+          <PageContainer as="section">
+            <div
+              className="rounded-[32px] border px-6 py-10 sm:px-8 lg:px-10 lg:py-12"
+              style={{
+                backgroundColor: brandColors.surface,
+                borderColor: brandColors.border,
+              }}
             >
-              Our Location
-            </h2>
-            <p
-              className="mb-2 text-lg font-medium"
-              style={{ color: brandColors.textDark }}
+              <SectionTitle
+                title="Meet Our Team"
+                subtitle="The engineers and builders behind RoboNest."
+              />
+
+              <div className="mx-auto mt-12 grid max-w-5xl gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                {team.map((member, index) => (
+                  <motion.div
+                    key={member.name}
+                    {...reveal}
+                    transition={{ delay: index * 0.1, duration: 0.45 }}
+                    className="rounded-3xl border p-8 text-center"
+                    style={{
+                      backgroundColor: brandColors.bgLight,
+                      borderColor: brandColors.border,
+                    }}
+                  >
+                    <div
+                      className="mx-auto flex h-20 w-20 items-center justify-center rounded-full text-2xl font-bold text-white"
+                      style={{
+                        background: `linear-gradient(135deg, ${brandColors.primary}, ${brandColors.primaryHover})`,
+                      }}
+                    >
+                      {member.name.charAt(0)}
+                    </div>
+
+                    <h3
+                      className="mt-5 text-xl font-bold"
+                      style={{ color: brandColors.textDark }}
+                    >
+                      {member.name}
+                    </h3>
+
+                    <p
+                      className="mt-1 font-semibold"
+                      style={{ color: brandColors.primary }}
+                    >
+                      {member.role}
+                    </p>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </PageContainer>
+
+          <PageContainer as="section">
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.45 }}
+              className="mx-auto max-w-5xl rounded-[32px] border px-8 py-12 text-center md:px-12"
+              style={{
+                background:
+                  "linear-gradient(180deg, rgba(255,255,255,0.96) 0%, rgba(240,239,254,0.88) 100%)",
+                borderColor: brandColors.border,
+              }}
             >
-              Currently serving Iraq
-            </p>
-            <p style={{ color: brandColors.textMuted }}>
-              Future regional expansion planned
-            </p>
-          </motion.div>
+              <h2
+                className="text-3xl font-bold md:text-4xl"
+                style={{ color: brandColors.textDark }}
+              >
+                Ready to Build Your Next Project?
+              </h2>
+
+              <p
+                className="mx-auto mt-5 max-w-2xl text-base leading-relaxed md:text-lg"
+                style={{ color: brandColors.textMuted }}
+              >
+                Talk to our team about component sourcing, custom robotics
+                builds, or engineering services.
+              </p>
+
+              <Link
+                href="/contact"
+                className="mt-8 inline-flex items-center gap-2 rounded-full px-8 py-4 text-base font-bold text-white transition-transform hover:-translate-y-0.5 md:text-lg"
+                style={{
+                  backgroundColor: brandColors.primary,
+                }}
+              >
+                Contact Us
+                <ArrowRight className="h-5 w-5" />
+              </Link>
+            </motion.div>
+          </PageContainer>
         </div>
-      </section>
-
-      {/* CTA Section */}
-      <section
-        className="px-6 py-16 text-white lg:py-20"
-        style={{
-          background: `linear-gradient(135deg, ${brandColors.primary}, #60a5fa)`,
-        }}
-      >
-        <div className="mx-auto max-w-4xl text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <h2 className="mb-6 text-3xl font-bold md:text-4xl">
-              Ready to Build Your Next Project?
-            </h2>
-
-            <p className="mb-10 text-lg leading-relaxed text-white/90 md:text-xl">
-              Get in touch with our team for component sourcing, custom robotics
-              builds, or engineering services.
-            </p>
-
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="rounded-full bg-white px-10 py-4 text-lg font-bold shadow-lg transition-colors"
-              style={{ color: brandColors.primary }}
-            >
-              Contact Us
-            </motion.button>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer
-        className="px-6 py-8 text-center"
-        style={{ backgroundColor: "#111827", color: "#9ca3af" }}
-      >
-        <p>© 2026 RoboNest. All rights reserved.</p>
-      </footer>
-    </div>
+      </main>
+      <Footer />
+    </>
   );
 }

@@ -152,6 +152,7 @@ export default function LoginPage() {
         {/* Email */}
         <div style={{ marginBottom: 16 }}>
           <label
+            htmlFor="login-email"
             style={{
               display: "block",
               fontSize: 14,
@@ -174,6 +175,7 @@ export default function LoginPage() {
           >
             <Mail size={20} style={{ color: "#6B6B8A" }} />
             <input
+              id="login-email"
               type="email"
               placeholder="you@example.com"
               value={email}
@@ -195,6 +197,7 @@ export default function LoginPage() {
         {/* Password */}
         <div style={{ marginBottom: 8 }}>
           <label
+            htmlFor="login-password"
             style={{
               display: "block",
               fontSize: 14,
@@ -217,6 +220,7 @@ export default function LoginPage() {
           >
             <Lock size={20} style={{ color: "#6B6B8A" }} />
             <input
+              id="login-password"
               type={showPassword ? "text" : "password"}
               placeholder="Enter your password"
               value={password}

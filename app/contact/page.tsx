@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import { motion } from "framer-motion"
-import { Mail, Phone, MapPin, Clock, MessageCircle } from "lucide-react"
+import { Clock, Mail, MapPin, MessageCircle, Phone } from "lucide-react"
 import Navbar from "@/src/components/Navbar"
 import Footer from "@/src/components/Footer"
 import PageContainer from "@/src/components/PageContainer"
@@ -11,14 +11,30 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { db } from "@/lib/firebase"
-import { collection, addDoc, serverTimestamp } from "firebase/firestore"
+import { addDoc, collection, serverTimestamp } from "firebase/firestore"
 
 const contactMethods = [
-  { icon: Mail, label: "Email", value: "robo.nestt@gmail.com", href: "mailto:robo.nestt@gmail.com" },
-  { icon: Phone, label: "Phone", value: "+9647503958385", href: "tel:+9647503958385" },
+  {
+    icon: Mail,
+    label: "Email",
+    value: "robo.nestt@gmail.com",
+    href: "mailto:robo.nestt@gmail.com",
+  },
+  {
+    icon: Phone,
+    label: "Phone",
+    value: "+9647503958385",
+    href: "tel:+9647503958385",
+  },
   { icon: MapPin, label: "Location", value: "Zakho", href: null },
-  { icon: Clock, label: "Working Hours", value: "9 AM – 9 PM", href: null },
+  { icon: Clock, label: "Working Hours", value: "9 AM - 9 PM", href: null },
 ]
+
+const reveal = {
+  initial: { opacity: 0, y: 14 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, amount: 0.2 },
+}
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({ name: "", email: "", message: "" })
@@ -27,6 +43,7 @@ export default function ContactPage() {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+
     if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
       setErrorMessage("Please complete all fields.")
       setStatus("error")
@@ -43,11 +60,11 @@ export default function ContactPage() {
         message: formData.message.trim(),
         createdAt: serverTimestamp(),
       })
+
       setStatus("success")
       setFormData({ name: "", email: "", message: "" })
       setTimeout(() => setStatus("idle"), 5000)
     } catch (error) {
-      console.error(error)
       setErrorMessage("Failed to send message. Please try again.")
       setStatus("error")
     }
@@ -57,42 +74,72 @@ export default function ContactPage() {
     <>
       <Navbar />
       <main style={{ paddingTop: 66, minHeight: "100vh", background: "#FBFCFF" }}>
-        {/* Hero Section */}
-        <section className="w-full py-16 lg:py-20">
+        <section className="w-full py-16 md:py-20 lg:py-24">
           <PageContainer>
             <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="text-center"
+              transition={{ duration: 0.55 }}
+              className="mx-auto max-w-3xl text-center"
             >
-              <h1 className="text-4xl lg:text-5xl font-bold text-foreground mb-4">Contact RoboNest</h1>
-              <p className="text-lg text-muted-foreground leading-relaxed max-w-2xl mx-auto">
-                Use this form to send a message, or choose one of the direct contact methods below. We're available 9 AM – 9 PM in Zakho.
+              <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2 text-sm font-semibold text-primary">
+                <MessageCircle className="h-4 w-4" />
+                Contact RoboNest
+              </div>
+              <h1 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl md:text-5xl">
+                Let&apos;s Build Something Great
+              </h1>
+              <p className="mx-auto mt-6 max-w-2xl text-base leading-relaxed text-muted-foreground md:text-lg">
+                Use the form to send your message, or choose one of our direct
+                contact channels. We are available every day from 9 AM to 9 PM
+                in Zakho.
               </p>
             </motion.div>
           </PageContainer>
         </section>
 
-        {/* Contact Methods Section */}
-        <section className="w-full py-16 lg:py-20">
+        <section className="w-full pb-16 md:pb-20 lg:pb-24">
           <PageContainer>
-            <h2 className="text-3xl font-bold text-foreground mb-6">Contact Methods</h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {contactMethods.map((item) => {
+            <motion.div
+              {...reveal}
+              transition={{ duration: 0.45 }}
+              className="mx-auto max-w-3xl text-center"
+            >
+              <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+                Contact Methods
+              </h2>
+              <p className="mt-4 text-base leading-relaxed text-muted-foreground md:text-lg">
+                Pick the channel that works best for your request.
+              </p>
+            </motion.div>
+
+            <div className="mx-auto mt-12 grid max-w-6xl gap-6 sm:grid-cols-2 xl:auto-rows-fr xl:grid-cols-4">
+              {contactMethods.map((item, index) => {
                 const Icon = item.icon
                 const content = (
-                  <div className="border border-border rounded-xl p-6 h-full flex flex-col gap-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                      <Icon className="w-5 h-5 text-primary" />
+                  <motion.div
+                    {...reveal}
+                    transition={{ delay: index * 0.07, duration: 0.4 }}
+                    className="flex h-full min-h-[168px] flex-col gap-4 rounded-2xl border border-border bg-white p-6 shadow-sm"
+                  >
+                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-primary/10">
+                      <Icon className="h-5 w-5 text-primary" />
                     </div>
-                    <p className="text-sm text-muted-foreground">{item.label}</p>
-                    <p className="font-semibold text-foreground leading-relaxed">{item.value}</p>
-                  </div>
+                    <p className="text-sm font-medium text-muted-foreground">{item.label}</p>
+                    <p className="text-base font-semibold leading-relaxed text-foreground">
+                      {item.value}
+                    </p>
+                  </motion.div>
                 )
 
                 return item.href ? (
-                  <a key={item.label} href={item.href} target="_blank" rel="noreferrer" className="block hover:shadow-md transition-shadow">
+                  <a
+                    key={item.label}
+                    href={item.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block transition-transform duration-200 hover:-translate-y-0.5"
+                  >
                     {content}
                   </a>
                 ) : (
@@ -103,20 +150,28 @@ export default function ContactPage() {
           </PageContainer>
         </section>
 
-        {/* Form & Priority Section */}
-        <section className="w-full py-16 lg:py-20 bg-white border-t border-b border-border">
+        <section className="w-full border-y border-border bg-white py-20 md:py-24 lg:py-28">
           <PageContainer>
-            <div className="grid lg:grid-cols-2 gap-6">
-              <div>
-                <h2 className="text-3xl font-bold text-foreground mb-6">Send a Message</h2>
+            <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1.05fr_0.95fr]">
+              <motion.div
+                {...reveal}
+                transition={{ duration: 0.45 }}
+                className="rounded-2xl border border-border bg-white p-6 sm:p-8"
+              >
+                <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+                  Send a Message
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                  Share your project details and we will get back to you soon.
+                </p>
 
                 {status === "success" && (
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="border border-emerald-300 bg-emerald-50 text-emerald-800 rounded-lg px-4 py-3 mb-4"
+                    className="mt-6 rounded-lg border border-emerald-300 bg-emerald-50 px-4 py-3 text-emerald-800"
                   >
-                    Message sent successfully. We'll get back to you soon.
+                    Message sent successfully. We&apos;ll get back to you soon.
                   </motion.div>
                 )}
 
@@ -124,14 +179,14 @@ export default function ContactPage() {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="border border-rose-300 bg-rose-50 text-rose-800 rounded-lg px-4 py-3 mb-4"
+                    className="mt-6 rounded-lg border border-rose-300 bg-rose-50 px-4 py-3 text-rose-800"
                   >
                     {errorMessage}
                   </motion.div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <div className="space-y-2">
+                <form onSubmit={handleSubmit} className="mt-8 space-y-6">
+                  <div className="space-y-3">
                     <Label htmlFor="name">Name</Label>
                     <Input
                       id="name"
@@ -143,7 +198,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label htmlFor="email">Email</Label>
                     <Input
                       type="email"
@@ -156,7 +211,7 @@ export default function ContactPage() {
                     />
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-3">
                     <Label htmlFor="message">Message</Label>
                     <Textarea
                       id="message"
@@ -164,7 +219,7 @@ export default function ContactPage() {
                       value={formData.message}
                       onChange={(e) => setFormData((prev) => ({ ...prev, message: e.target.value }))}
                       required
-                      className="min-h-[140px] resize-none"
+                      className="min-h-[150px] resize-none"
                     />
                   </div>
 
@@ -172,31 +227,53 @@ export default function ContactPage() {
                     {status === "submitting" ? "Sending..." : "Send Message"}
                   </Button>
                 </form>
-              </div>
+              </motion.div>
 
-              <div>
-                <h2 className="text-3xl font-bold text-foreground mb-6">Quick Contact</h2>
-                <div className="space-y-3 flex flex-col h-fit">
-                  <div className="border border-border rounded-lg p-4 bg-emerald-50/50">
-                    <p className="font-semibold text-emerald-900 mb-1">WhatsApp (Primary)</p>
-                    <p className="text-emerald-800 text-sm">+9647503958385</p>
-                    <p className="text-emerald-700 text-xs mt-2">Best for fast responses</p>
-                  </div>
-                  <div className="border border-border rounded-lg p-4">
-                    <p className="font-semibold text-foreground mb-1">Phone</p>
-                    <p className="text-muted-foreground text-sm">+9647503958385</p>
-                    <p className="text-muted-foreground text-sm">+9647503866153</p>
-                  </div>
-                  <div className="border border-border rounded-lg p-4">
-                    <p className="font-semibold text-foreground mb-1">Email</p>
-                    <p className="text-muted-foreground text-sm">robo.nestt@gmail.com</p>
-                  </div>
-                  <div className="border border-border rounded-lg p-4">
-                    <p className="font-semibold text-foreground mb-1">Hours</p>
-                    <p className="text-muted-foreground text-sm">9 AM – 9 PM daily</p>
+              <motion.aside
+                {...reveal}
+                transition={{ delay: 0.1, duration: 0.45 }}
+                className="rounded-2xl border border-border bg-[#F8FAFF] p-6 sm:p-8"
+              >
+                <h2 className="text-3xl font-bold text-foreground md:text-4xl">
+                  Quick Contact
+                </h2>
+                <p className="mt-3 text-base leading-relaxed text-muted-foreground">
+                  For urgent inquiries, start with WhatsApp for the fastest
+                  response.
+                </p>
+
+                <div className="mt-8 space-y-4">
+                  <a
+                    href="https://wa.me/9647503958385"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block rounded-xl border border-emerald-200 bg-emerald-50 p-4 transition hover:-translate-y-0.5"
+                  >
+                    <p className="mb-1 font-semibold text-emerald-900">WhatsApp (Primary)</p>
+                    <p className="text-sm text-emerald-800">+9647503958385</p>
+                    <p className="mt-2 text-xs text-emerald-700">Best for fast responses</p>
+                  </a>
+                  <a
+                    href="tel:+9647503958385"
+                    className="block rounded-xl border border-border bg-white p-4 transition hover:-translate-y-0.5"
+                  >
+                    <p className="mb-1 font-semibold text-foreground">Phone</p>
+                    <p className="text-sm text-muted-foreground">+9647503958385</p>
+                    <p className="text-sm text-muted-foreground">+9647503866153</p>
+                  </a>
+                  <a
+                    href="mailto:robo.nestt@gmail.com"
+                    className="block rounded-xl border border-border bg-white p-4 transition hover:-translate-y-0.5"
+                  >
+                    <p className="mb-1 font-semibold text-foreground">Email</p>
+                    <p className="text-sm text-muted-foreground">robo.nestt@gmail.com</p>
+                  </a>
+                  <div className="rounded-xl border border-border bg-white p-4">
+                    <p className="mb-1 font-semibold text-foreground">Hours</p>
+                    <p className="text-sm text-muted-foreground">9 AM - 9 PM daily</p>
                   </div>
                 </div>
-              </div>
+              </motion.aside>
             </div>
           </PageContainer>
         </section>

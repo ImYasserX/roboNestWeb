@@ -301,7 +301,7 @@ export default function AdminDashboard() {
               </thead>
               <tbody>
                 {recentOrders.map((order) => (
-                  <tr key={order.id}>
+                  <tr key={order.id ?? order.userId}>
                     <td
                       style={{
                         padding: "16px",
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
                         borderBottom: "1px solid #E4E6F1",
                       }}
                     >
-                      #{order.id.slice(-6).toUpperCase()}
+                      #{(order.id ?? "").slice(-6).toUpperCase()}
                     </td>
                     <td
                       style={{
@@ -321,7 +321,7 @@ export default function AdminDashboard() {
                         borderBottom: "1px solid #E4E6F1",
                       }}
                     >
-                      {(order as any).shippingAddress?.fullName || "N/A"}
+                      {(order.delivery?.fullName || order.shippingAddress?.fullName || "N/A")}
                     </td>
                     <td
                       style={{

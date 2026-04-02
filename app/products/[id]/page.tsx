@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PageContainer from "@/src/components/PageContainer";
 import ProductImageGallery from "@/src/components/ProductImageGallery";
 import ProductInfo from "@/src/components/ProductInfo";
 import RelatedProducts from "@/src/components/RelatedProducts";
@@ -299,11 +300,6 @@ export default function ProductDetailPage() {
     let active = true;
 
     const loadWishlistState = async () => {
-      console.log("[ProductDetail] loadWishlistState", {
-        authUid: user?.uid || null,
-        contextProductId: productId,
-      });
-
       if (!user) {
         if (active) setIsWishlisted(false);
         return;
@@ -311,19 +307,10 @@ export default function ProductDetailPage() {
 
       try {
         const exists = await isInWishlist(user.uid, productId);
-        console.log("[ProductDetail] wishlist state resolved", {
-          authUid: user.uid,
-          productId,
-          exists,
-        });
         if (active) {
           setIsWishlisted(exists);
         }
       } catch (loadError) {
-        console.error("[ProductDetail] loadWishlistState failed", loadError, {
-          authUid: user.uid,
-          productId,
-        });
         if (active) {
           setIsWishlisted(false);
         }
@@ -339,37 +326,20 @@ export default function ProductDetailPage() {
 
   const handleWishlistToggle = async () => {
     if (!user) {
-      console.warn("[ProductDetail] wishlist toggle blocked: no authenticated user", {
-        productId,
-      });
       router.push("/login");
       return;
     }
 
     const nextState = !isWishlisted;
-    console.log("[ProductDetail] wishlist toggle", {
-      authUid: user.uid,
-      productId,
-      nextState,
-    });
     setIsWishlisted(nextState);
 
     try {
       if (nextState) {
-        console.log("[ProductDetail] ADDING:", user.uid, productId);
         await addToWishlist(user.uid, productId);
-        console.log("[ProductDetail] ADD WRITE SUCCESS", { authUid: user.uid, productId });
       } else {
-        console.log("[ProductDetail] REMOVING:", user.uid, productId);
         await removeFromWishlist(user.uid, productId);
-        console.log("[ProductDetail] REMOVE WRITE SUCCESS", { authUid: user.uid, productId });
       }
     } catch (toggleError) {
-      console.error("[ProductDetail] wishlist toggle failed", toggleError, {
-        authUid: user.uid,
-        productId,
-        nextState,
-      });
       setIsWishlisted(!nextState);
     }
   };
@@ -392,13 +362,7 @@ export default function ProductDetailPage() {
     <main style={{ paddingTop: 66, minHeight: "100vh" }}>
       <Navbar />
 
-      <div
-        style={{
-          maxWidth: 1440,
-          margin: "0 auto",
-          padding: "24px 16px",
-        }}
-      >
+      <PageContainer style={{ paddingBlock: "24px" }}>
         {/* Breadcrumb */}
         <Link
           href="/products"
@@ -453,7 +417,7 @@ export default function ProductDetailPage() {
             <RelatedProducts category={product.category} excludeId={product.id} />
           </>
         )}
-      </div>
+      </PageContainer>
 
       <Footer />
     </main>

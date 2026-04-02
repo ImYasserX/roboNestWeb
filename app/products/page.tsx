@@ -4,6 +4,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import Navbar from "@/src/components/Navbar";
 import Footer from "@/src/components/Footer";
+import PageContainer from "@/src/components/PageContainer";
 import ProductCard from "@/src/components/ProductCard";
 import { categories as defaultCategories, sampleProducts } from "@/src/data/products";
 import { fetchProducts, FetchProductsResult } from "@/src/services/productService";
@@ -158,6 +159,11 @@ export default function ProductsPage() {
     loadProducts();
   }, [loadProducts]);
 
+  useEffect(() => {
+    setSearchQuery(queryParam);
+    setSelectedCategory(categoryParam);
+  }, [categoryParam, queryParam]);
+
   // Combined categories from default + dynamic
   const allCategories = useMemo(() => {
     const categorySet = new Set([
@@ -239,13 +245,7 @@ export default function ProductsPage() {
     <main style={{ paddingTop: 66, minHeight: "100vh", background: "#F8F9FF" }}>
       <Navbar />
 
-      <div
-        style={{
-          maxWidth: 1440,
-          margin: "0 auto",
-          padding: "24px 16px",
-        }}
-      >
+      <PageContainer style={{ paddingBlock: "24px" }}>
         {/* Header */}
         <div style={{ marginBottom: 24 }}>
           <h1
@@ -733,7 +733,7 @@ export default function ProductsPage() {
             )}
           </div>
         </div>
-      </div>
+      </PageContainer>
 
       {/* Mobile Filter Modal */}
       {filterModalOpen && (

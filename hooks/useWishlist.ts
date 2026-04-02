@@ -37,7 +37,6 @@ export function useWishlist(userId?: string | null, fetchProducts = true) {
           productId: doc.id,
         }));
 
-        console.log("[useWishlist] snapshot received", { userId, count: nextRefs.length });
         setRefs(nextRefs);
         setLoading(false);
       },
@@ -91,16 +90,11 @@ export function useWishlist(userId?: string | null, fetchProducts = true) {
   const addToWishlist = useCallback(
     async (productId: string) => {
       if (!userId || !productId) {
-        console.warn("[useWishlist] addToWishlist skipped, missing userId or productId", {
-          userId,
-          productId,
-        });
         return false;
       }
 
       try {
         await addToWishlistService(userId, productId);
-        console.log("[useWishlist] addToWishlist success", { userId, productId });
         return true;
       } catch (addError) {
         console.error("[useWishlist] addToWishlist failed", addError);
@@ -114,16 +108,11 @@ export function useWishlist(userId?: string | null, fetchProducts = true) {
   const removeFromWishlist = useCallback(
     async (productId: string) => {
       if (!userId || !productId) {
-        console.warn("[useWishlist] removeFromWishlist skipped, missing userId or productId", {
-          userId,
-          productId,
-        });
         return false;
       }
 
       try {
         await removeFromWishlistService(userId, productId);
-        console.log("[useWishlist] removeFromWishlist success", { userId, productId });
         return true;
       } catch (removeError) {
         console.error("[useWishlist] removeFromWishlist failed", removeError);
